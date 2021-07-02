@@ -124,7 +124,6 @@ void main()
     vec2 q = fragCoord.xy / iResolution.xy;
     vec2 uv = q;
     uv = mix( uv, curve( uv ), params.CURVATURE );
-    vec3 oricol = texture( iChannel0, vec2(q.x,q.y) ).xyz;
     vec3 col;
 	float x =  sin(0.1*sTime+uv.y*21.0)*sin(0.23*sTime+uv.y*29.0)*sin(0.3+0.11*sTime+uv.y*31.0)*0.0017;
 	float o =2.0*mod(fragCoord.y,2.0)/iResolution.x;
@@ -165,9 +164,6 @@ void main()
 		col *= 0.0;
 	if (uv.y < 0.0 || uv.y > 1.0)
 		col *= 0.0;
-	
-
-    float comp = smoothstep( 0.1, 0.9, sin(iTime) );
 
     FragColor = vec4(col,1.0);
 }
