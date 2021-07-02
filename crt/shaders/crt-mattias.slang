@@ -2,6 +2,7 @@
 
 // CRT Emulation
 // by Mattias
+// on 2014-09-10
 // https://www.shadertoy.com/view/lsB3DV
 
 layout(push_constant) uniform Push
@@ -48,7 +49,11 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 
 vec3 sample_( sampler2D tex, vec2 tc )
 {
-    vec3 s = pow(texture(tex,tc).rgb, vec3(2.2));
+    vec3 s = texture(tex,tc).rgb;
+
+    // adjust input gamma
+    s = pow(s, vec3(2.2));
+
     return s;
 }
 
@@ -91,11 +96,8 @@ vec3 blur(sampler2D tex, vec2 tc, float offs)
     return color;
 }
 
-//Canonical noise function; replaced to prevent precision errors
-//float rand(vec2 co){
-//    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-//}
-
+// Canonical noise function
+// Credit: http://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
 float rand(vec2 co)
 {
     float a = 12.9898;
@@ -104,6 +106,9 @@ float rand(vec2 co)
     float dt= dot(co.xy, vec2(a,b));
     float sn= mod(dt, 3.14);
     return fract(sin(sn) * c);
+
+    // replaced to prevent precision errors
+    //return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
 vec2 curve(vec2 uv)
@@ -119,44 +124,63 @@ void main()
 {
     float sTime = iTime * params.SCANSPEED;
 
-    vec2 q = fragCoord.xy / iResolution.xy;
-    vec2 uv = q;
+    vec2 uv = fragCoord.xy / iResolution.xy;
+
+    // curvature
     uv = mix(uv, curve(uv), params.CURVATURE);
-    vec3 col;
-    float x = sin(0.1 * sTime + uv.y * 21.0) * sin(0.23 * sTime + uv.y * 29.0) * sin(0.3 + 0.11 * sTime + uv.y * 31.0) * 0.0017;
+
+    // sawtooth effect
     float o = 2.0 * mod(fragCoord.y, 2.0) / iResolution.x;
+
+    // ripple effect
+    float x = sin(0.1 * sTime + uv.y * 21.0) * sin(0.23 * sTime + uv.y * 29.0) * sin(0.3 + 0.11 * sTime + uv.y * 31.0) * 0.0017;
     x += o;
+
+    // color bleed
+    vec3 col;
     col.r =  1.0 * blur(iChannel0, vec2(x + uv.x + 0.0009, uv.y + 0.0009), 1.20).x + 0.005;
     col.g =  1.0 * blur(iChannel0, vec2(x + uv.x + 0.0000, uv.y - 0.0015), 1.20).y + 0.005;
     col.b =  1.0 * blur(iChannel0, vec2(x + uv.x - 0.0015, uv.y + 0.0000), 1.20).z + 0.005;
     col.r += 0.2 * blur(iChannel0, vec2(x + uv.x + 0.0009, uv.y + 0.0009), 2.25).x - 0.005;
     col.g += 0.2 * blur(iChannel0, vec2(x + uv.x + 0.0000, uv.y - 0.0015), 1.75).y - 0.005;
     col.b += 0.2 * blur(iChannel0, vec2(x + uv.x - 0.0015, uv.y + 0.0000), 1.25).z - 0.005;
+
+    // ghosting
     col.r += 0.05 * (1.0 - 0.299) * blur(iChannel0, 0.75 * vec2(x - 0.010, -0.027) + vec2(uv.x + 0.001, uv.y + 0.001), 7.0).x;
     col.g += 0.05 * (1.0 - 0.587) * blur(iChannel0, 0.75 * vec2(x - 0.022, -0.020) + vec2(uv.x + 0.000, uv.y - 0.002), 5.0).y;
     col.b += 0.05 * (1.0 - 0.114) * blur(iChannel0, 0.75 * vec2(x - 0.020, -0.000) + vec2(uv.x - 0.002, uv.y + 0.000), 3.0).z;
 
+    // brighten
     col = clamp(0.4 * col + 0.6 * col * col, 0.0, 1.0);
 
+    // vignette
     float vig = (16.0 * uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y));
     vig = pow(vig, 0.3);
     col *= vec3(vig);
 
+    // level adjustment
     col *= vec3(0.95, 1.05, 0.95);
     col = mix(col, col * col, 0.3) * 3.8;
 
-    float scans_y = (uv.y * params.OriginalSize.y * Pi2) - HalfPi;
-    float scans = clamp(0.35 + 0.15 * sin(3.5 * sTime + scans_y), 0.0, 1.0);
+    // scanlines
+    float scans = (uv.y * params.OriginalSize.y * Pi2) - HalfPi;
+    scans = clamp(0.35 + 0.15 * sin(3.5 * sTime + scans), 0.0, 1.0);
+    scans = pow(scans, 0.9);
+    col = col * vec3(scans);
 
-    float s = pow(scans, 0.9);
-    col = col * vec3(s);
-
+    // flicker
     col *= 1.0 + 0.0015 * sin(300.0 * iTime);
 
+    // shadow mask
     col *= 1.0 - 0.15 * vec3(clamp((mod(fragCoord.x + o, 2.0) - 1.0) * 2.0, 0.0, 1.0));
+
+    // noise
     col *= vec3( 1.0 ) - 0.25 * vec3(rand(uv + 0.0001 * iTime), rand(uv + 0.0001 * iTime + 0.3), rand(uv + 0.0001 * iTime + 0.5));
+
+    // ajdust output gamma
     col = pow(col, vec3(0.45));
 
+    // clamp
     if (uv.x < 0.0 || uv.x > 1.0)
         col *= 0.0;
     if (uv.y < 0.0 || uv.y > 1.0)
