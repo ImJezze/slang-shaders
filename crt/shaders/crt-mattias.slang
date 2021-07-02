@@ -42,6 +42,9 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 #define iTime (float(params.FrameCount) / 60.0)
 #define iResolution params.OutputSize.xy
 #define fragCoord (vTexCoord.xy * params.OutputSize.xy)
+#define Pi 3.1415927
+#define Pi2 (Pi * 2.0)
+#define HalfPi (Pi * 0.5)
 
 vec3 sample_( sampler2D tex, vec2 tc )
 {
@@ -144,7 +147,8 @@ void main()
     col *= vec3(0.95,1.05,0.95);
 	col = mix( col, col * col, 0.3) * 3.8;
 
-	float scans = clamp( 0.35+0.15*sin(3.5*(iTime * params.SCANSPEED)+uv.y*iResolution.y*1.5), 0.0, 1.0);
+	float scans_y = (uv.y * params.OriginalSize.y * Pi2) - HalfPi;
+	float scans = clamp( 0.35+0.15*sin(3.5*(iTime * params.SCANSPEED)+scans_y), 0.0, 1.0);
 	
 	float s = pow(scans,0.9);
 	col = col*vec3( s) ;
