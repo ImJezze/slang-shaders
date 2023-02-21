@@ -31,11 +31,11 @@ void main()
     gl_Position = global.MVP * Position;
     TexCoord = Coord;
 
-    Diffusion = normalized_sigmoid(PARAM_HALATION_DIFFUSION - 0.05, -0.75);
-    Diffusion = max(0.0, 1.0 - Diffusion);
+    Diffusion = normalized_sigmoid(PARAM_HALATION_DIFFUSION, -0.5);
+    Diffusion = max(0.02, 1.0 - Diffusion);
 
     Tabs = normalized_sigmoid(PARAM_HALATION_DIFFUSION, 0.5) * 16.0;
-    Tabs = max(2.0, round(Tabs));
+    Tabs = max(4.0, round(Tabs));
 
     Multiple = get_multiple(global.SourceSize.xy);
     Multiple = max(1.0, round(Multiple));
