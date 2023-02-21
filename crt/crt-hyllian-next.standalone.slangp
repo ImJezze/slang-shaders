@@ -1,0 +1,18 @@
+shaders = 1
+
+shader0 = "shaders/hyllian/crt-hyllian-next/crt-hyllian-next.standalone.slang"
+filter_linear0 = false
+
+// Global master
+GLOBAL_MASTER = 1.0
+
+// Optional settings
+// #include "shaders/hyllian/crt-hyllian-next/presets/curvature.settings"
+
+// Optional presets
+// #include "shaders/hyllian/crt-hyllian-next/presets/base-lighter.settings"
+// #include "shaders/hyllian/crt-hyllian-next/presets/base-light.settings" // default
+// #include "shaders/hyllian/crt-hyllian-next/presets/base-dark.settings"
+// #include "shaders/hyllian/crt-hyllian-next/presets/base-darker.settings"
+
+// Info: subsequent presets will not override previous settings

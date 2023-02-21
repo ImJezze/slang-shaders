@@ -1,0 +1,3 @@
+// Halation parameters
+HALATION_INTENSITY = 0.25
+HALATION_DIFFUSION = 0.5
