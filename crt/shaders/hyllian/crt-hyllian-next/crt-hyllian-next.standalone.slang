@@ -44,12 +44,12 @@ layout (push_constant) uniform Push
 } param;
 
 // Global parameters
-#pragma parameter GLOBAL_MASTER "· ¹Global > Master  (0-None .. 1-Full)" 1.0 0.0 1.0 0.05
+#pragma parameter GLOBAL_MASTER "· ¹Global > Master  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.05
 
 // Color parameters
 #pragma parameter COLOR_CONTRAST "·  Color > Contrast¹  (-Lower / +Higher)" 0.25 -2.0 2.0 0.05
 #pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken / +Lighten)" 0.0 -1.0 2.0 0.05
-#pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow  (0-None .. 1-Full)" 0.5 0.0 2.0 0.25
+#pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full)" 0.5 0.0 2.0 0.25
 #pragma parameter COLOR_COMPENSATION "  ²Color > Brightnes Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
 // Scanline/beam parameters
@@ -58,13 +58,13 @@ layout (push_constant) uniform Push
 #pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape  (0-Sharp .. 1-Smooth)" 0.5 0.0 1.0 0.25
 #pragma parameter BEAM_FILTER "   Scanlines > Beam Filter  (1-Hermite, 2-Hyllian, 3-Catrom)" 1.0 1.0 3.0 1.0
 #pragma parameter BEAM_SHARPNESS "   Scanlines > Beam Filter Sharpness  (0-None, 2x, 4x, 8x)" 0.0 0.0 3.0 1.0
-#pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Color Burn  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
+#pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Color Burn¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
 
 // Mask parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²  (-Darken / +Lighten)" 0.5 -1.0 1.0 0.05
 #pragma parameter MASK_TYPE "   Mask > Type²  (0-Off, 1-Aperture, 2-Slot, 3-Shadow)" 1.0 0.0 3.0 1.0
 #pragma parameter MASK_COLOR_COUNT "   Mask > Color Count²  (0-Mono, 1-BY, 2-MG, 3-RGB, 4-RGBK)" 3.0 0.0 4.0 1.0
-#pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
+#pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
 #pragma parameter MASK_SIZE "   Mask > Size  (-Down / 0-Auto / +Up)" 0.0 -4.0 4.0 1.0
 
 // CRT parameters
@@ -81,34 +81,34 @@ layout (push_constant) uniform Push
 #pragma parameter INFO1 "¹ Reduces marked effects" 0.0 0.0 0.0 0.0
 #pragma parameter INFO2 "² Compensates marked effect's brightness changes" 0.0 0.0 0.0 0.0
 
-#define PARAM_SCREEN_SCALE param.SCREEN_SCALE
-#define PARAM_SCREEN_OFFSET param.SCREEN_OFFSET
+float mix_master(float value, float default_value, float minimum, float maximum)
+{
+    return param.GLOBAL_MASTER > 1.0
+        ? mix(value, clamp(value * param.GLOBAL_MASTER, min(value, minimum), max(value, maximum)), param.GLOBAL_MASTER - 1.0)
+        : mix(default_value, value, param.GLOBAL_MASTER);
+}
+
 #define PARAM_SCREEN_ORIENTATION param.SCREEN_ORIENTATION
-#define PARAM_COLOR_BRIGHTNESS \
-    mix(0.0, param.COLOR_BRIGHTNESS, param.GLOBAL_MASTER)
-#define PARAM_COLOR_OVERFLOW param.COLOR_OVERFLOW
+#define PARAM_SCREEN_OFFSET param.SCREEN_OFFSET
+#define PARAM_SCREEN_SCALE param.SCREEN_SCALE
+#define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 2.0)
+#define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
-#define PARAM_COLOR_CONTRAST \
-    mix(0.0, param.COLOR_CONTRAST, param.GLOBAL_MASTER)
-#define PARAM_MASK_INTENSITY \
-    mix(0.0, param.MASK_INTENSITY, param.GLOBAL_MASTER)
+#define PARAM_COLOR_CONTRAST mix_master(param.COLOR_CONTRAST, 0.0, -2.0, 2.0)
+#define PARAM_MASK_INTENSITY mix_master(param.MASK_INTENSITY, 0.0, -1.0, 1.0)
 #define PARAM_MASK_SIZE param.MASK_SIZE
 #define PARAM_MASK_TYPE param.MASK_TYPE
 #define PARAM_MASK_COLOR_COUNT param.MASK_COLOR_COUNT
-#define PARAM_MASK_COLOR_BLEED param.MASK_COLOR_BLEED
-#define PARAM_SCANLINES_STRENGTH \
-    mix(0.0, param.SCANLINES_STRENGTH, param.GLOBAL_MASTER)
+#define PARAM_MASK_COLOR_BLEED mix_master(param.MASK_COLOR_BLEED, 0.0, 0.0, 1.0)
+#define PARAM_SCANLINES_STRENGTH mix_master(param.SCANLINES_STRENGTH, 0.0, 0.0, 1.0)
 #define PARAM_BEAM_WIDTH param.BEAM_WIDTH
 #define PARAM_BEAM_SHAPE param.BEAM_SHAPE
 #define PARAM_BEAM_SHARPNESS param.BEAM_SHARPNESS
 #define PARAM_BEAM_FILTER param.BEAM_FILTER
 #define PARAM_SCANLINES_COLOR_BURN param.SCANLINES_COLOR_BURN
-#define PARAM_CRT_CURVATURE_AMOUNT \
-    mix(0.0, param.CRT_CURVATURE_AMOUNT, param.GLOBAL_MASTER)
-#define PARAM_CRT_VIGNETTE_AMOUNT \
-    mix(0.0, param.CRT_VIGNETTE_AMOUNT, param.GLOBAL_MASTER)
-#define PARAM_CRT_CORNER_RAIDUS \
-    mix(0.0, param.CRT_CORNER_RAIDUS, param.GLOBAL_MASTER)
+#define PARAM_CRT_CURVATURE_AMOUNT mix_master(param.CRT_CURVATURE_AMOUNT, 0.0, 0.0, 1.0)
+#define PARAM_CRT_VIGNETTE_AMOUNT mix_master(param.CRT_VIGNETTE_AMOUNT, 0.0, 0.0, 1.0)
+#define PARAM_CRT_CORNER_RAIDUS mix_master(param.CRT_CORNER_RAIDUS, 0.0, 0.0, 0.25)
 #define PARAM_CRT_CORNER_SMOOTHNESS param.CRT_CORNER_SMOOTHNESS
 #define PARAM_HALATION_INTENSITY 0.0 // unused here, but required by crt-hyllian-next-fs.h
 
