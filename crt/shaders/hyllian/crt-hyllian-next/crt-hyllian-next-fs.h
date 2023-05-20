@@ -30,7 +30,7 @@
 #define INPUT(color) decode_gamma(color, PARAM_COLOR_CONTRAST)
 #define INPUT_B(color) apply_brightness(INPUT(color), PARAM_COLOR_BRIGHTNESS)
 #define INPUT_C(color) apply_brightness(INPUT(color), PARAM_COLOR_BRIGHTNESS + INPUT_BRIGHTNESS_COMPENSATION)
-#define OUTPUT(color) encode_gamma(color, PARAM_COLOR_CONTRAST)
+#define OUTPUT(color) encode_gamma(apply_saturation(color, PARAM_COLOR_SATURATION), PARAM_COLOR_CONTRAST)
 
 vec2 vec2o(vec2 v)
 {
@@ -137,7 +137,7 @@ vec3 get_half_scanlines_factor(vec3 color, float position)
     // limit color burn
     vec3 width_limit = mix(
         // max. color value for all channel
-        vec3(max(max(color.r, color.g), color.b)),
+        vec3(max_color(color)),
         // no limit
         color,
         PARAM_SCANLINES_COLOR_BURN);

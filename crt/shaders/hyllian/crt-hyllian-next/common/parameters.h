@@ -4,6 +4,7 @@
 // Color parameters
 #pragma parameter COLOR_PROFILE "·  Color > Profile¹  (-NTSC / +Trinitron)" 0.0 -1.0 1.0 0.25
 #pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower / +Higher)" 0.25 -2.0 2.0 0.05
+#pragma parameter COLOR_SATURATION "   Color > Saturation¹  (0-Low .. 2-High)" 1.0 0.0 2.0 0.05
 #pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken / +Lighten)" 0.0 -1.0 2.0 0.05
 #pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full)" 0.5 0.0 2.0 0.25
 #pragma parameter COLOR_COMPENSATION "  ²Color > Brightnes Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
@@ -73,6 +74,7 @@ float mix_master(float value, float default_value, float minimum, float maximum)
 #define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
 #define PARAM_COLOR_CONTRAST mix_master(param.COLOR_CONTRAST, 0.0, -2.0, 2.0)
+#define PARAM_COLOR_SATURATION mix_master(param.COLOR_SATURATION, 1.0, 0.0, 2.0)
 #define PARAM_COLOR_PROFILE mix_master(param.COLOR_PROFILE, 0.0, -1.0, 1.0)
 #define PARAM_MASK_INTENSITY mix_master(param.MASK_INTENSITY, 0.0, -1.0, 1.0)
 #define PARAM_MASK_SIZE param.MASK_SIZE

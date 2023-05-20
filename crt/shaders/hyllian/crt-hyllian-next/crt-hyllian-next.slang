@@ -22,6 +22,7 @@ layout (push_constant) uniform Push
     float SCREEN_OFFSET;
     float SCREEN_ORIENTATION;
     float COLOR_BRIGHTNESS;
+    float COLOR_SATURATION;
     float COLOR_COMPENSATION;
     float COLOR_OVERFLOW;
     float COLOR_CONTRAST;

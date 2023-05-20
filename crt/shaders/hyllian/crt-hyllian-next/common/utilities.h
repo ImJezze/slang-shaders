@@ -4,6 +4,8 @@
 
 #include "colorspace-srgb.h"
 
+#define EPSILON 0.000001
+
 // Applies a normalized sigmoid function to the given value.
 //   The input parameters have to be in the range of [-1.0, 1.0].
 // @value: the value to transform
@@ -291,12 +293,39 @@ vec3 encode_gamma(vec3 color, float contrast)
     return srgb_to_rgb_fast(color, gamma);
 }
 
+// Returns the maximum value of the given color.
+// @color - the color.
+float max_color(vec3 color)
+{
+    return max(max(color.r, color.g), color.b);
+}
+
+// Normalizes the given color based on a reference color.
+// @color - the color.
+// @reference - the reference color.
+vec3 normalize_color(vec3 color, vec3 reference)
+{
+    return color / (max_color(color) + EPSILON) * max_color(reference);
+}
+
 // Applies the brightness to the given color.
 // @color - the color.
 // @brightness - the brightness to apply.
 vec3 apply_brightness(vec3 color, float brightness)
 {
     return color * (1.0 + brightness);
+}
+
+// Applies the saturation to the given color.
+// @color - the color.
+// @brightness - the saturation to apply.
+vec3 apply_saturation(vec3 color, float saturation)
+{
+    float luma = get_luminance(color);
+
+    return saturation > 1.0
+        ? normalize_color(pow(color, vec3(saturation)), color)
+        : mix(vec3(luma), color, saturation);
 }
 
 #endif // UTILITIES_DEFINDED
