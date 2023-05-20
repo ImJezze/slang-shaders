@@ -259,6 +259,7 @@ vec3 apply_mask(vec3 color, vec2 tex_coord)
         int(INPUT_SUBPIXEL_SIZE),
         int(PARAM_MASK_TYPE),
         int(PARAM_MASK_COLOR_COUNT),
+        bool(PARAM_MASK_COLOR_SWAP),
         1.0,
         INPUT_SUBPIXEL_SMOOTHNESS);
 

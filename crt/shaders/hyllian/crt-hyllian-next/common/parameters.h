@@ -20,7 +20,8 @@
 // Mask parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²  (-Darken / +Lighten)" 0.5 -1.0 1.0 0.05
 #pragma parameter MASK_TYPE "   Mask > Type²  (0-Off, 1-Aperture, 2-Slot, 3-Shadow)" 1.0 0.0 3.0 1.0
-#pragma parameter MASK_COLOR_COUNT "   Mask > Color Count²  (0-Mono, 1-BY, 2-MG, 3-RGB, 4-RGBK)" 3.0 0.0 4.0 1.0
+#pragma parameter MASK_COLOR_COUNT "   Mask > Color Count²  (0-Mono, 1-MG, 2-MGK, 3-RGB, 4-RGBK)" 3.0 0.0 4.0 1.0
+#pragma parameter MASK_COLOR_SWAP "   Mask > Color Swap  (0-RGB, 1-BGR)" 0.0 0.0 1.0 1.0
 #pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
 #pragma parameter MASK_SIZE "   Mask > Size  (-Down / 0-Auto / +Up)" 0.0 -4.0 4.0 1.0
 
@@ -80,6 +81,7 @@ float mix_master(float value, float default_value, float minimum, float maximum)
 #define PARAM_MASK_SIZE param.MASK_SIZE
 #define PARAM_MASK_TYPE param.MASK_TYPE
 #define PARAM_MASK_COLOR_COUNT param.MASK_COLOR_COUNT
+#define PARAM_MASK_COLOR_SWAP param.MASK_COLOR_SWAP
 #define PARAM_MASK_COLOR_BLEED mix_master(param.MASK_COLOR_BLEED, 0.0, 0.0, 1.0)
 #define PARAM_SCANLINES_STRENGTH mix_master(param.SCANLINES_STRENGTH, 0.0, 0.0, 1.0)
 #define PARAM_BEAM_WIDTH param.BEAM_WIDTH

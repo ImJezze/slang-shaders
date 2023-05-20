@@ -37,6 +37,7 @@ layout (push_constant) uniform Push
     float MASK_SIZE;
     float MASK_TYPE;
     float MASK_COLOR_COUNT;
+    float MASK_COLOR_SWAP;
     float MASK_COLOR_BLEED;
     float HALATION_INTENSITY;
     float HALATION_DIFFUSION;
