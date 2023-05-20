@@ -1,39 +1,3 @@
-layout (push_constant) uniform Push
-{
-    float GLOBAL_MASTER;
-    float SCREEN_SCALE;
-    float SCREEN_OFFSET;
-    float SCREEN_ORIENTATION;
-    float NTSC_PROFILE;
-    float NTSC_QUALITY;
-    float DECONVERGE_LINEAR;
-    float DECONVERGE_RADIAL;
-    float PHOSPHOR_AMOUNT;
-    float PHOSPHOR_DECAY;
-    float COLOR_BRIGHTNESS;
-    float COLOR_COMPENSATION;
-    float COLOR_OVERFLOW;
-    float COLOR_CONTRAST;
-    float COLOR_PROFILE;
-    float SCANLINES_STRENGTH;
-    float BEAM_WIDTH;
-    float BEAM_SHAPE;
-    float BEAM_SHARPNESS;
-    float BEAM_FILTER;
-    float SCANLINES_COLOR_BURN;
-    float MASK_INTENSITY;
-    float MASK_SIZE;
-    float MASK_TYPE;
-    float MASK_COLOR_COUNT;
-    float MASK_COLOR_BLEED;
-    float HALATION_INTENSITY;
-    float HALATION_DIFFUSION;
-    float CRT_CURVATURE_AMOUNT;
-    float CRT_VIGNETTE_AMOUNT;
-    float CRT_CORNER_RAIDUS;
-    float CRT_CORNER_SMOOTHNESS;
-} param;
-
 // Global parameters
 #pragma parameter GLOBAL_MASTER "· ¹Global > Master  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.05
 

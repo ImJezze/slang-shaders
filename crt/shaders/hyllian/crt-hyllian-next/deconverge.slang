@@ -14,6 +14,16 @@ layout(std140, set = 0, binding = 0) uniform UBO
     vec4 FinalViewportSize;
 } global;
 
+layout (push_constant) uniform Push
+{
+    float GLOBAL_MASTER;
+    float SCREEN_SCALE;
+    float SCREEN_OFFSET;
+    float SCREEN_ORIENTATION;
+    float DECONVERGE_LINEAR;
+    float DECONVERGE_RADIAL;
+} param;
+
 #include "crt-hyllian-next.parameters"
 #include "common/utilities.h"
 #include "common/colorspace-srgb.h"

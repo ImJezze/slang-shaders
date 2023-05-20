@@ -19,6 +19,16 @@ layout(std140, set = 0, binding = 0) uniform UBO
     uint FrameCount;
 } global;
 
+layout (push_constant) uniform Push
+{
+    float GLOBAL_MASTER;
+    float SCREEN_SCALE;
+    float SCREEN_OFFSET;
+    float SCREEN_ORIENTATION;
+    float PHOSPHOR_AMOUNT;
+    float PHOSPHOR_DECAY;
+} param;
+
 #include "crt-hyllian-next.parameters"
 #include "common/utilities.h"
 #include "common/colorspace-srgb.h"

@@ -15,6 +15,36 @@ layout(std140, set = 0, binding = 0) uniform UBO
     uint FrameCount;
 } global;
 
+layout (push_constant) uniform Push
+{
+    float GLOBAL_MASTER;
+    float SCREEN_SCALE;
+    float SCREEN_OFFSET;
+    float SCREEN_ORIENTATION;
+    float COLOR_BRIGHTNESS;
+    float COLOR_COMPENSATION;
+    float COLOR_OVERFLOW;
+    float COLOR_CONTRAST;
+    float COLOR_PROFILE;
+    float SCANLINES_STRENGTH;
+    float BEAM_WIDTH;
+    float BEAM_SHAPE;
+    float BEAM_SHARPNESS;
+    float BEAM_FILTER;
+    float SCANLINES_COLOR_BURN;
+    float MASK_INTENSITY;
+    float MASK_SIZE;
+    float MASK_TYPE;
+    float MASK_COLOR_COUNT;
+    float MASK_COLOR_BLEED;
+    float HALATION_INTENSITY;
+    float HALATION_DIFFUSION;
+    float CRT_CURVATURE_AMOUNT;
+    float CRT_VIGNETTE_AMOUNT;
+    float CRT_CORNER_RAIDUS;
+    float CRT_CORNER_SMOOTHNESS;
+} param;
+
 #include "crt-hyllian-next.parameters"
 
 #include "common/utilities.h"
