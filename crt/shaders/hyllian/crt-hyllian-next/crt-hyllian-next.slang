@@ -12,13 +12,12 @@ layout(std140, set = 0, binding = 0) uniform UBO
     vec4 SourceSize;
     vec4 OutputSize;
     vec4 FinalViewportSize;
-    vec4 PhosphorPassSize;
     uint FrameCount;
 } global;
 
-#include "common/utilities.h"
-
 #include "crt-hyllian-next.parameters"
+
+#include "common/utilities.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -62,7 +61,7 @@ layout(location = 7) in vec4 BeamProfile;
 layout(location = 8) in mat4x4 BeamFilter;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
-layout(set = 0, binding = 3) uniform sampler2D PhosphorPass;
+layout(set = 0, binding = 3) uniform sampler2D LutPass;
 
 // required by crt-hyllian-next-fs.h
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
@@ -76,7 +75,7 @@ layout(set = 0, binding = 3) uniform sampler2D PhosphorPass;
 
 #include "crt-hyllian-next-fs.h"
 
-#define TextureSource PhosphorPass 
+#define TextureSource LutPass 
 #define HalationSource Source
 
 void main()

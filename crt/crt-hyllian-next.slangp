@@ -1,4 +1,4 @@
-shaders = 7
+shaders = 8
 
 shader0 = "shaders/hyllian/crt-hyllian-next/ntsc-pass1.slang"
 filter_linear0 = false
@@ -22,14 +22,22 @@ filter_linear2 = true // to allow factional de-converge
 shader3 = "shaders/hyllian/crt-hyllian-next/phosphor.slang"
 filter_linear3 = false
 
-shader4 = "shaders/hyllian/crt-hyllian-next/blur-horizontal.slang"
+shader4 = "shaders/hyllian/crt-hyllian-next/lut.slang"
 filter_linear4 = false
+textures = "SamplerLutNtsc;SamplerLutTrinitron;"
+SamplerLutNtsc = shaders/guest/advanced/lut/ntsc-lut.png
+SamplerLutNtsc_linear = true
+SamplerLutTrinitron = shaders/guest/advanced/lut/trinitron-lut.png
+SamplerLutTrinitron_linear = true 
 
-shader5 = "shaders/hyllian/crt-hyllian-next/blur-vertical.slang"
+shader5 = "shaders/hyllian/crt-hyllian-next/blur-horizontal.slang"
 filter_linear5 = false
 
-shader6 = "shaders/hyllian/crt-hyllian-next/crt-hyllian-next.slang"
-filter_linear6 = true // to sample blur linear
+shader6 = "shaders/hyllian/crt-hyllian-next/blur-vertical.slang"
+filter_linear6 = false
+
+shader7 = "shaders/hyllian/crt-hyllian-next/crt-hyllian-next.slang"
+filter_linear7 = true // to sample blur linear
 
 // Global master
 GLOBAL_MASTER = 1.0
