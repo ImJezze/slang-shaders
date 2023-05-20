@@ -38,7 +38,7 @@ layout (push_constant) uniform Push
     float NTSC_QUALITY;
 } param;
 
-#include "crt-hyllian-next.parameters"
+#include "common/parameters.h"
 #include "common/utilities.h"
 #include "ntsc-pass2.h"
 

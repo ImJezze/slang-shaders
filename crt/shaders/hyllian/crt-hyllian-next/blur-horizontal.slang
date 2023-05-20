@@ -24,7 +24,7 @@ layout (push_constant) uniform Push
     float HALATION_DIFFUSION;
 } param;
 
-#include "crt-hyllian-next.parameters"
+#include "common/parameters.h"
 #include "common/utilities.h"
 #include "common/colorspace-srgb.h"
 

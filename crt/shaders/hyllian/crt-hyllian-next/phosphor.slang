@@ -29,7 +29,7 @@ layout (push_constant) uniform Push
     float PHOSPHOR_DECAY;
 } param;
 
-#include "crt-hyllian-next.parameters"
+#include "common/parameters.h"
 #include "common/utilities.h"
 #include "common/colorspace-srgb.h"
 

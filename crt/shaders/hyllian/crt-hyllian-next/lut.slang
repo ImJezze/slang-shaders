@@ -26,7 +26,7 @@ layout (push_constant) uniform Push
     float COLOR_PROFILE;
 } param;
 
-#include "crt-hyllian-next.parameters"
+#include "common/parameters.h"
 #include "common/colorspace-srgb.h"
 
 #pragma stage vertex

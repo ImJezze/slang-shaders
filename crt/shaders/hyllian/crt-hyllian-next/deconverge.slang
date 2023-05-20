@@ -24,7 +24,7 @@ layout (push_constant) uniform Push
     float DECONVERGE_RADIAL;
 } param;
 
-#include "crt-hyllian-next.parameters"
+#include "common/parameters.h"
 #include "common/utilities.h"
 #include "common/colorspace-srgb.h"
 

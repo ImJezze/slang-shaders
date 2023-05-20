@@ -45,8 +45,7 @@ layout (push_constant) uniform Push
     float CRT_CORNER_SMOOTHNESS;
 } param;
 
-#include "crt-hyllian-next.parameters"
-
+#include "common/parameters.h"
 #include "common/utilities.h"
 
 #pragma stage vertex

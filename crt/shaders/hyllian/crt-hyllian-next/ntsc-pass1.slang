@@ -38,9 +38,9 @@ layout (push_constant) uniform Push
     float NTSC_QUALITY;
 } param;
 
-#include "crt-hyllian-next.parameters"
-#include "ntsc-pass1.h"
+#include "common/parameters.h"
 #include "common/utilities.h"
+#include "ntsc-pass1.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
