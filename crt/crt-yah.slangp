@@ -1,6 +1,6 @@
 shaders = 8
 
-shader0 = "shaders/hyllian/crt-hyllian-next/ntsc-pass1.slang"
+shader0 = "shaders/crt-yah/ntsc-pass1.slang"
 filter_linear0 = false
 float_framebuffer0 = true
 scale_type_x0 = source
@@ -8,7 +8,7 @@ scale_type_y0 = source
 scale_x0 = 4.0 // up-scale in both dimension to be independent of the orientation
 scale_y0 = 4.0
 
-shader1 = "shaders/hyllian/crt-hyllian-next/ntsc-pass2.slang"
+shader1 = "shaders/crt-yah/ntsc-pass2.slang"
 filter_linear1 = true // sample ntsc-1-output linear (compensates artifacts)
 float_framebuffer1 = false
 scale_type_x1 = source
@@ -16,25 +16,25 @@ scale_type_y1 = source
 scale_x1 = 0.25 // down-scale in both dimension to be independent of the orientation
 scale_y1 = 0.25
 
-shader2 = "shaders/hyllian/crt-hyllian-next/deconverge.slang"
+shader2 = "shaders/crt-yah/deconverge.slang"
 filter_linear2 = true // sample ntsc-2-output linear (factional de-converge)
 
-shader3 = "shaders/hyllian/crt-hyllian-next/phosphor.slang"
+shader3 = "shaders/crt-yah/phosphor.slang"
 filter_linear3 = false
 
-shader4 = "shaders/hyllian/crt-hyllian-next/lut.slang"
+shader4 = "shaders/crt-yah/lut.slang"
 filter_linear4 = false
 textures = "SamplerLutNtsc;SamplerLutTrinitron;"
-SamplerLutNtsc = shaders/hyllian/crt-hyllian-next/lut/ntsc-lut.png
+SamplerLutNtsc = shaders/crt-yah/lut/ntsc-lut.png
 SamplerLutNtsc_linear = true
-SamplerLutTrinitron = shaders/hyllian/crt-hyllian-next/lut/trinitron-lut.png
+SamplerLutTrinitron = shaders/crt-yah/lut/trinitron-lut.png
 SamplerLutTrinitron_linear = true 
 
-shader5 = "shaders/hyllian/crt-hyllian-next/blur-horizontal.slang"
+shader5 = "shaders/crt-yah/blur-horizontal.slang"
 filter_linear5 = true // sample lut-output linear
 
-shader6 = "shaders/hyllian/crt-hyllian-next/blur-vertical.slang"
+shader6 = "shaders/crt-yah/blur-vertical.slang"
 filter_linear6 = false
 
-shader7 = "shaders/hyllian/crt-hyllian-next/crt-hyllian-next.slang"
+shader7 = "shaders/crt-yah/crt-yah.slang"
 filter_linear7 = true // sample blur-output linear

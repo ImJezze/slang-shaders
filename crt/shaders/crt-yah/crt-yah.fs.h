@@ -1,5 +1,6 @@
 /*
-    Based on CRT shader by Hyllian
+    Yah! - Yet Another Hyllian
+    Based on the CRT shader by Hyllian
     Modified by Jezze
 
     Copyright (C) 2011-2025 Hyllian - sergiogdb@gmail.com

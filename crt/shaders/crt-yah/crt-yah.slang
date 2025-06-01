@@ -1,7 +1,8 @@
 #version 450
 
 /*
-    Based on CRT shader by Hyllian
+    Yah! - Yet Another Hyllian
+    Based on the CRT shader by Hyllian
     Modified by Jezze
 */
 
@@ -77,7 +78,7 @@ layout(location = 5) out float BrightnessCompensation;
 layout(location = 6) out vec4 BeamProfile;
 layout(location = 7) out mat4x4 BeamFilter;
 
-#include "crt-hyllian-next-vs.h"
+#include "crt-yah.vs.h"
 
 void main()
 {
@@ -106,7 +107,7 @@ layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 layout(set = 0, binding = 3) uniform sampler2D LutPass;
 
-// required by crt-hyllian-next-fs.h
+// required by crt-yah.fs.h
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
 #define INPUT_SCREEN_MULTIPLE ScreenMultiple
 #define INPUT_BRIGHTNESS_COMPENSATION BrightnessCompensation
@@ -115,7 +116,7 @@ layout(set = 0, binding = 3) uniform sampler2D LutPass;
 #define INPUT_BEAM_FILTER BeamFilter
 #define INPUT_BEAM_PROFILE BeamProfile
 
-#include "crt-hyllian-next-fs.h"
+#include "crt-yah.fs.h"
 
 #define HalationSource Source
 #define TextureSource LutPass

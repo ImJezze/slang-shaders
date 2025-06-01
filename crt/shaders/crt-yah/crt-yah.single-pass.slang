@@ -1,7 +1,8 @@
 #version 450
 
-/*
-    Based on CRT shader by Hyllian
+/*    
+    Yah! - Yet Another Hyllian
+    Based on the CRT shader by Hyllian
     Modified by Jezze
 */
 
@@ -97,7 +98,7 @@ float mix_master(float value, float default_value, float minimum, float maximum)
         : mix(default_value, value, param.GLOBAL_MASTER);
 }
 
-// required by crt-hyllian-next-fs.h
+// required by crt-yah.fs.h
 #define PARAM_SCREEN_ORIENTATION param.SCREEN_ORIENTATION
 #define PARAM_SCREEN_SCALE param.SCREEN_SCALE
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
@@ -152,7 +153,7 @@ layout(location = 5) out float BrightnessCompensation;
 layout(location = 6) out vec4 BeamProfile;
 layout(location = 7) out mat4x4 BeamFilter;
 
-#include "crt-hyllian-next-vs.h"
+#include "crt-yah.vs.h"
 
 void main()
 {
@@ -180,7 +181,7 @@ layout(location = 7) in mat4x4 BeamFilter;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 
-// required by crt-hyllian-next-fs.h
+// required by crt-yah.fs.h
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
 #define INPUT_SCREEN_MULTIPLE ScreenMultiple
 #define INPUT_BRIGHTNESS_COMPENSATION BrightnessCompensation
@@ -189,7 +190,7 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 #define INPUT_BEAM_FILTER BeamFilter
 #define INPUT_BEAM_PROFILE BeamProfile
 
-#include "crt-hyllian-next-fs.h"
+#include "crt-yah.fs.h"
 
 void main()
 {
@@ -197,8 +198,8 @@ void main()
     vec2 tex_coord_curved = apply_cubic_lens_distortion(tex_coord);
     vec2 tex_coord_curved_sharpend = apply_sharp_bilinear_filtering(tex_coord_curved);
 
-    vec3 raw_color = get_raw_color(TextureSource, tex_coord_curved_sharpend);
-    vec3 scanlines_color = get_scanlines_color(TextureSource, tex_coord_curved);
+    vec3 raw_color = get_raw_color(Source, tex_coord_curved_sharpend);
+    vec3 scanlines_color = get_scanlines_color(Source, tex_coord_curved);
 
     vec3 color = blend_colors(raw_color, scanlines_color);
     float color_luma = get_luminance(color);
