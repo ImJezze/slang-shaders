@@ -2,8 +2,8 @@
     Based on CRT shader by Hyllian
     Modified by Jezze
 
-    Copyright (C) 2011-2023 Hyllian - sergiogdb@gmail.com
-    Copyright (C) 2023 Jezze - jezze@gmx.net
+    Copyright (C) 2011-2025 Hyllian - sergiogdb@gmail.com
+    Copyright (C) 2023-2025 Jezze - jezze@gmx.net
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -25,13 +25,7 @@
 #include "common/colorspace-srgb.h"
 #include "common/subpixel-color.h"
 
-#define EPSILON 0.000001
-
-#define INPUT(color) decode_gamma(color, PARAM_COLOR_CONTRAST)
-#define INPUT_B(color) apply_brightness(INPUT(color), PARAM_COLOR_BRIGHTNESS)
-#define INPUT_C(color) apply_brightness(INPUT(color), PARAM_COLOR_BRIGHTNESS + INPUT_BRIGHTNESS_COMPENSATION)
-#define OUTPUT(color) encode_gamma(apply_saturation(color, PARAM_COLOR_SATURATION), PARAM_COLOR_CONTRAST)
-
+// orientation-aware vec2 constructors
 vec2 vec2o(vec2 v)
 {
     return INPUT_SCREEN_ORIENTATION == 0.0
@@ -58,6 +52,23 @@ vec2 vec2oy(vec2 v, float f)
     return INPUT_SCREEN_ORIENTATION == 0.0
         ? vec2(f, v.y)
         : vec2(v.x, f);
+}
+
+// Based on the sharp-bilinear shader by The Maister.
+// Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
+vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
+{
+    vec2 texel = tex_coord * global.SourceSize.xy;
+
+    // Figure out where in the texel to sample to get correct pre-scaled bilinear.
+    float scale = floor(global.OutputSize.y / global.SourceSize.y + 0.01);
+    float region_range = 0.5 - 0.5 / scale;
+    vec2 center_distance = fract(texel) - 0.5;
+    vec2 fraction = (center_distance - clamp(center_distance, -region_range, region_range)) * scale + 0.5;
+
+    vec2 sharp_texel = floor(texel) + fraction;
+
+    return sharp_texel / global.SourceSize.xy;
 }
 
 vec2 apply_cubic_lens_distortion(vec2 tex_coord)
@@ -109,30 +120,12 @@ float get_round_corner_factor(vec2 tex_coord)
         PARAM_CRT_CORNER_SMOOTHNESS);
 }
 
-vec3 limit_color(vec3 color)
-{
-    // allow colors > 1
-    float color_limit = mix(
-        1.0,
-        INPUT_MAXIMUM_COLOR,
-        // for beam width > 1
-        max(0.0, (PARAM_BEAM_WIDTH - 1.0))
-        // when strength in range [0.5, 1.0]
-        * min(1.0, PARAM_SCANLINES_STRENGTH * 2.0));
-
-    // limit max. brightens
-    return min(color, vec3(color_limit));
-}
-
 vec3 get_half_scanlines_factor(vec3 color, float position)
 {
     float min_width = INPUT_BEAM_PROFILE.x;
     float max_width = INPUT_BEAM_PROFILE.y;
     float slope = INPUT_BEAM_PROFILE.z;
     float strength = INPUT_BEAM_PROFILE.w;
-
-    // limit max. color
-    color = limit_color(color);
 
     // limit color burn
     vec3 width_limit = mix(
@@ -155,58 +148,76 @@ vec3 get_half_scanlines_factor(vec3 color, float position)
     return factor;
 }
 
-vec3 get_half_beam_color(sampler2D source, vec2 tex_coord, vec2 delta_x, vec2 delta_y, vec4 beam_filter, float anti_ringing)
+vec3 get_half_beam_color(sampler2D source, vec2 tex_coord, vec2 delta_x, vec2 delta_y, vec4 beam_filter)
 {
     // get spline bases
-    vec3 x = INPUT_C(texture(source, tex_coord -       delta_x - delta_y).xyz);
-    vec3 y = INPUT_C(texture(source, tex_coord                 - delta_y).xyz);
-    vec3 z = INPUT_C(texture(source, tex_coord +       delta_x - delta_y).xyz);
-    vec3 w = INPUT_C(texture(source, tex_coord + 2.0 * delta_x - delta_y).xyz);
+    vec3 x = INPUT(texture(source, tex_coord -       delta_x - delta_y).xyz);
+    vec3 y = INPUT(texture(source, tex_coord                 - delta_y).xyz);
+    vec3 z = INPUT(texture(source, tex_coord +       delta_x - delta_y).xyz);
+    vec3 w = INPUT(texture(source, tex_coord + 2.0 * delta_x - delta_y).xyz);
 
     // get color from spline
     vec3 color = mat4x3(x, y, z, w) * beam_filter;
 
-    // apply anti-ringing
-    vec3 color_step = step(0.0, (x - y) * (z - w));
+    // change filter range from [-1.0, 1.0] to [0.0, 2.0]
+    float anti_ringing = smoothstep(1.5, 2.0, PARAM_BEAM_FILTER + 1.0);
+
+    // apply anti-ringing (only when filter below 1.0)
+    vec3 color_step = step(0.0, abs(x - y) * abs(z - w));
     vec3 color_clamp = clamp(color, min(y, z), max(y, z));
-    color = mix(color, color_clamp, color_step * anti_ringing);
+    color = mix(color, color_clamp, color_step * (1.0 - anti_ringing));
 
     return color;
 }
 
-vec3 get_color(sampler2D source, vec2 tex_coord)
+vec3 get_raw_color(sampler2D source, vec2 tex_coord)
 {
-    vec3 color = INPUT_C(texture(source, tex_coord).xyz);
-    if (PARAM_SCANLINES_STRENGTH == 0.0)
-    {
-        return color;
-    }
+    return INPUT(texture(source, tex_coord).xyz);
+}
 
-    float beam_sharpness = PARAM_BEAM_SHARPNESS + 1.0;
-
+vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
+{
     vec2 tex_size = global.OriginalSize.xy;
 
-    // apply scanlines sharpness
-    tex_size *= vec2o(beam_sharpness, 1.0);
+    // apply (fake) scale
+    tex_size /= INPUT_SCREEN_MULTIPLE;
 
-    // apply scanlines scale
-    tex_size /= vec2o(1.0, INPUT_SCREEN_MULTIPLE);
+    vec2 pc = tex_coord;
+
+    // texture to pixel coordinates
+    pc *= tex_size;
 
     // apply half pixel offset (align to pixel corner)
-    vec2 pc = tex_coord;
-    pc *= tex_size;
     pc += vec2(0.5, 0.5);
 
-    // apply half texel offset (scaling depended - required for NTSC phase-2 modulation)
     vec2 tc = floor(pc);
-    tc += vec2o(-0.5, 0.5 / max(1.0, INPUT_SCREEN_MULTIPLE));
 
+    // when down-scaled
     if (INPUT_SCREEN_MULTIPLE > 1.0)
     {
-        // apply factional offset if screen is down-scaled
-        float scanlines_offset = PARAM_SCREEN_OFFSET / INPUT_SCREEN_MULTIPLE;
-        tc += vec2o(0.0, scanlines_offset);
+        // apply half texel offset
+        tc += vec2o(-0.5, 0.5) / INPUT_SCREEN_MULTIPLE;
+
+        // apply half texel x-offset to sample between two sub-resolution pixel
+        tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
     }
+    // when up-scaled
+    else
+    {
+        // apply half texel offset
+        tc += vec2o(-0.5, 0.5);
+    }
+
+    float scanlines_offset = PARAM_SCANLINES_OFFSET > 0.0
+        // fixed offset
+        ? PARAM_SCANLINES_OFFSET
+        // jitter offset
+        : mod(global.FrameCount, 2.0) > 0.0
+            ? 0.0
+            : abs(PARAM_SCANLINES_OFFSET);
+
+    // apply half texel y-offset to sample between scanlines
+    tc += vec2o(0.0, 0.5 * scanlines_offset);
 
     // pixel to texture coordinates
     tc /= tex_size;
@@ -220,32 +231,34 @@ vec3 get_color(sampler2D source, vec2 tex_coord)
     // apply filtering
     vec4 beam_filter = vec4(pcf.x * pcf.x * pcf.x, pcf.x * pcf.x, pcf.x, 1.0)
         * INPUT_BEAM_FILTER;
-    float anti_ringing =
-        // for Catmull-Rom filter
-        PARAM_BEAM_FILTER == 3 ? 1.0 :
-        // for Hyllian filter
-        PARAM_BEAM_FILTER == 2 ? 0.5 :
-        // for Hermite filter
-        PARAM_BEAM_FILTER == 1 ? 0.0 : 0.0;
 
-    vec3 color0 = get_half_beam_color(source, tc, dx, dy, beam_filter, anti_ringing);
-    vec3 color1 = get_half_beam_color(source, tc, dx, vec2(0.0), beam_filter, anti_ringing);
+    vec3 color0 = get_half_beam_color(source, tc, dx, dy, beam_filter);
+    vec3 color1 = get_half_beam_color(source, tc, dx, vec2(0.0), beam_filter);
 
     // apply scanlines
     vec3 factor0 = get_half_scanlines_factor(color0, pcf.y);
     vec3 factor1 = get_half_scanlines_factor(color1, 1.0 - pcf.y);
 
-    // merged raw color with scanlines for strength < 0.125
-    float merge_limit = min(1.0, PARAM_SCANLINES_STRENGTH * 8);
-    color = mix(
-        color,
-        color0 * factor0 + color1 * factor1,
-        merge_limit);
-
-    return color;
+    return color0 * factor0 + color1 * factor1;
 }
 
-vec3 apply_mask(vec3 color, vec2 tex_coord)
+vec3 blend_colors(vec3 raw_color, vec3 scanlines_color)
+{
+    if (PARAM_SCANLINES_STRENGTH == 0.0)
+    {
+        return raw_color;
+    }
+
+    // merged raw color with scanlines for strength < 0.125
+    float merge_limit = min(1.0, PARAM_SCANLINES_STRENGTH * 8);
+
+    return mix(
+        raw_color,
+        scanlines_color,
+        merge_limit);
+}
+
+vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
 {
     if (PARAM_MASK_TYPE == 0.0)
     {
@@ -254,33 +267,55 @@ vec3 apply_mask(vec3 color, vec2 tex_coord)
 
     vec2 pix_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
 
-    vec3 subpixel_color = get_subpixel_color(
+    // change color count 0 to 1 and swap colors from 1-MG to 0-BY (mono)
+    int color_count = PARAM_MASK_COLOR_COUNT < 1.0
+        ? int(PARAM_MASK_COLOR_COUNT + 1)
+        : int(PARAM_MASK_COLOR_COUNT);
+    bool color_swap = PARAM_MASK_COLOR_COUNT < 1.0;
+
+    vec3 mask = get_subpixel_color(
         pix_coord,
         int(INPUT_SUBPIXEL_SIZE),
         int(PARAM_MASK_TYPE),
-        int(PARAM_MASK_COLOR_COUNT),
-        bool(PARAM_MASK_COLOR_SWAP),
+        color_count,
+        color_swap,
         1.0,
         INPUT_SUBPIXEL_SMOOTHNESS);
+    float mask_luma = get_luminance(mask);
 
     // apply color bleed to neighbor sub-pixel
-    subpixel_color += get_luminance(subpixel_color) * PARAM_MASK_COLOR_BLEED;
+    mask += mask_luma * PARAM_MASK_COLOR_BLEED;
 
-    return color * get_subpixel_weight(subpixel_color, PARAM_MASK_INTENSITY);
+    // apply color luma for bright pixel based on opacity
+    mask = mix(
+        mask,
+        mask + color_luma,
+        color_luma * PARAM_MASK_OPACITY);
+
+    // increase mask brightnes based on intensity
+    vec3 mask_clear = mask;
+    mask_clear += 1.0 - PARAM_MASK_INTENSITY;
+    mask_clear = clamp(mask_clear, 0.0, 1.0);
+    mask_clear += PARAM_MASK_INTENSITY;
+
+    // apply mask brightnes for bright pixel based on opacity
+    mask = mix(
+        mask,
+        mask_clear,
+        color_luma * PARAM_MASK_OPACITY);
+
+    // apply mask based on intensity
+    color = mix(
+        color,
+        color * mask,
+        PARAM_MASK_INTENSITY);
+
+    return color;
 }
 
 vec3 apply_color_overflow(vec3 color)
 {
-    // limit color overflow
-    float overflow_limit = max(0.0, PARAM_COLOR_OVERFLOW - 1.0);
-    vec3 color_limit = 
-        // equal 1.0, if overflow is in range of [0.0, 1.0]
-        vec3(1.0)
-        // below 1.0, if overflow is > 2.0
-        - vec3(overflow_limit) * LumaC;
-
-    // apply color overflow for colors > limit squared
-    vec3 color_overflow = max(vec3(0.0), color * color - color_limit * color_limit) * PARAM_COLOR_OVERFLOW;
+    vec3 color_overflow = color * color * PARAM_COLOR_OVERFLOW;
 
     color.r += LumaR * LumaG * color_overflow.g;
     color.r += LumaR * LumaB * color_overflow.b;
@@ -294,13 +329,35 @@ vec3 apply_color_overflow(vec3 color)
 
 vec3 apply_halation(vec3 color, sampler2D source, vec2 tex_coord)
 {
-    vec3 halation = INPUT_B(texture(source, tex_coord).xyz);
+    vec3 halation = INPUT(texture(source, tex_coord).xyz);
+
+    // add half the difference between color and halation
+    return color + ((abs(halation - color) / 2.0) * PARAM_HALATION_INTENSITY);
+}
+
+vec3 apply_noise(vec3 color, vec2 tex_coord)
+{
+    vec2 pix_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
+
+    // scale noise based on mask's sub-pixel size
+    pix_coord = floor(pix_coord / int(INPUT_SUBPIXEL_SIZE)) * int(INPUT_SUBPIXEL_SIZE);
+
+    // repeat every 20 frames with 12fps (60fps * 0.2)
+    float frame = mod(floor(global.FrameCount * 0.2), 20);
+    float random = random(pix_coord * (frame + 1.0));
 
     return mix(
-        // either take the maximum of color and half halation
-        max(color, halation / 2.0 * PARAM_HALATION_INTENSITY),
-        // or add half the difference between color and halation
-        color + abs(halation - color) / 2.0 * PARAM_HALATION_INTENSITY,
-        // depending on the intensity
-        PARAM_HALATION_INTENSITY);
+        color,
+        color * random * 2.0,
+        PARAM_CRT_NOISE_AMOUNT * 0.5);
+}
+
+vec3 apply_brightness_compensation(vec3 color, float color_luma)
+{
+    if (PARAM_COLOR_COMPENSATION > 0.0)
+    {
+        color = apply_brightness(color, INPUT_BRIGHTNESS_COMPENSATION * (1.0 - color_luma));
+    }
+
+    return color;
 }

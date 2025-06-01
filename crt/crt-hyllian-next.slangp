@@ -5,19 +5,19 @@ filter_linear0 = false
 float_framebuffer0 = true
 scale_type_x0 = source
 scale_type_y0 = source
-scale_x0 = 4.0
+scale_x0 = 4.0 // up-scale in both dimension to be independent of the orientation
 scale_y0 = 4.0
 
 shader1 = "shaders/hyllian/crt-hyllian-next/ntsc-pass2.slang"
-filter_linear1 = true // to compensate artifacts
+filter_linear1 = true // sample ntsc-1-output linear (compensates artifacts)
 float_framebuffer1 = false
 scale_type_x1 = source
 scale_type_y1 = source
-scale_x1 = 0.25
+scale_x1 = 0.25 // down-scale in both dimension to be independent of the orientation
 scale_y1 = 0.25
 
 shader2 = "shaders/hyllian/crt-hyllian-next/deconverge.slang"
-filter_linear2 = true // to allow factional de-converge
+filter_linear2 = true // sample ntsc-2-output linear (factional de-converge)
 
 shader3 = "shaders/hyllian/crt-hyllian-next/phosphor.slang"
 filter_linear3 = false
@@ -25,34 +25,16 @@ filter_linear3 = false
 shader4 = "shaders/hyllian/crt-hyllian-next/lut.slang"
 filter_linear4 = false
 textures = "SamplerLutNtsc;SamplerLutTrinitron;"
-SamplerLutNtsc = shaders/guest/advanced/lut/ntsc-lut.png
+SamplerLutNtsc = shaders/hyllian/crt-hyllian-next/lut/ntsc-lut.png
 SamplerLutNtsc_linear = true
-SamplerLutTrinitron = shaders/guest/advanced/lut/trinitron-lut.png
+SamplerLutTrinitron = shaders/hyllian/crt-hyllian-next/lut/trinitron-lut.png
 SamplerLutTrinitron_linear = true 
 
 shader5 = "shaders/hyllian/crt-hyllian-next/blur-horizontal.slang"
-filter_linear5 = false
+filter_linear5 = true // sample lut-output linear
 
 shader6 = "shaders/hyllian/crt-hyllian-next/blur-vertical.slang"
 filter_linear6 = false
 
 shader7 = "shaders/hyllian/crt-hyllian-next/crt-hyllian-next.slang"
-filter_linear7 = true // to sample blur linear
-
-// Global master
-GLOBAL_MASTER = 1.0
-
-// Optional settings
-// #include "shaders/hyllian/crt-hyllian-next/presets/ntsc.settings"
-// #include "shaders/hyllian/crt-hyllian-next/presets/deconverge.settings"  // default
-// #include "shaders/hyllian/crt-hyllian-next/presets/phosphor.settings"  // default
-// #include "shaders/hyllian/crt-hyllian-next/presets/halation.settings" // default
-// #include "shaders/hyllian/crt-hyllian-next/presets/curvature.settings"
-
-// Optional presets
-// #include "shaders/hyllian/crt-hyllian-next/presets/base-lighter.settings"
-// #include "shaders/hyllian/crt-hyllian-next/presets/base-light.settings" // default
-// #include "shaders/hyllian/crt-hyllian-next/presets/base-dark.settings"
-// #include "shaders/hyllian/crt-hyllian-next/presets/base-darker.settings"
-
-// Info: subsequent presets will not override previous settings
+filter_linear7 = true // sample blur-output linear

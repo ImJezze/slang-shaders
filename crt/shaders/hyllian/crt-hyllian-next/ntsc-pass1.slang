@@ -11,7 +11,7 @@
 //    float_framebuffer0 = true
 //    scale_type_x0 = source
 //    scale_type_y0 = source
-//    scale_x0 = 4.0
+//    scale_x0 = 4.0 // up-scale in both dimension to be independent of the orientation
 //    scale_y0 = 4.0
 
 const float Prescale = 4.0;
@@ -32,7 +32,6 @@ layout (push_constant) uniform Push
 {
     float GLOBAL_MASTER;
     float SCREEN_SCALE;
-    float SCREEN_OFFSET;
     float SCREEN_ORIENTATION;
     float NTSC_PROFILE;
     float NTSC_QUALITY;

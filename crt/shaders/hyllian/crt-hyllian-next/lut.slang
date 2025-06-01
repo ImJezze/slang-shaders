@@ -1,8 +1,8 @@
 #version 450
 
 /*
-    Based on Deconverge shader by Jezze
-    Ported from MAME
+    Based on LUT shader by Hunter Kaller
+    Modified by Jezze
 */
 
 #pragma name LutPass
@@ -20,9 +20,6 @@ layout(std140, set = 0, binding = 0) uniform UBO
 layout (push_constant) uniform Push
 {
     float GLOBAL_MASTER;
-    float SCREEN_SCALE;
-    float SCREEN_OFFSET;
-    float SCREEN_ORIENTATION;
     float COLOR_PROFILE;
 } param;
 
@@ -53,14 +50,18 @@ vec3 apply_lut(vec3 color, sampler2D lut_sampler)
 
     float red = (color.r * (lut_size - 1.0) + 0.5) / (lut_size * lut_size);
     float green = (color.g * (lut_size - 1.0) + 0.5) / lut_size;
-    float blue1 = (floor(color.b * (lut_size - 1.0)) / lut_size) + red;
+    float blue = (floor(color.b * (lut_size - 1.0)) / lut_size) + red;
 
-    return texture(lut_sampler, vec2(blue1, green)).rgb;
+    return texture(lut_sampler, vec2(blue, green)).rgb;
 }
+
+// no gamma correction
+#define INPUT(color) color
+#define OUTPUT(color) color
 
 void main()
 {
-    vec3 color = texture(Source, TexCoord).rgb;
+    vec3 color = INPUT(texture(Source, TexCoord).rgb);
 
     vec3 ntsc_color = apply_lut(color, SamplerLutNtsc);
     vec3 trinitron_color = apply_lut(color, SamplerLutTrinitron);
@@ -69,5 +70,5 @@ void main()
         ? mix(color, ntsc_color, -PARAM_COLOR_PROFILE)
         : mix(color, trinitron_color, PARAM_COLOR_PROFILE);
 
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(OUTPUT(color), 1.0);
 }

@@ -413,24 +413,4 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
     return color;
 }
 
-// Gets the weight of the given sub-pixel color of a mask by the specified intensity.
-// @color - the full-saturated color of the mask
-//    see: get_subpixel_color()
-// @intensity - the intensity of the mask in range [-1.0, 1.0]
-//    < 0: applies a darkening mask
-//    > 0: applies a lightening mask
-vec3 get_subpixel_weight(vec3 color, float intensity)
-{
-    color = clamp(color, 0.0, 1.0);
-    color += 1.0 - abs(intensity);
-    color = clamp(color, 0.0, 1.0);
-
-    if (intensity > 0.0)
-    {
-        color += intensity;
-    }
-
-    return color;
-}
-
 #endif // SUBPIXEL_COLOR_DEFINDED

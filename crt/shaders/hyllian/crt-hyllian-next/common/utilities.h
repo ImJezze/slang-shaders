@@ -6,6 +6,21 @@
 
 #define EPSILON 0.000001
 
+const float PI = 3.1415926;
+const float PIo2 = PI / 2.0;
+const float E = 2.7182817;
+const float Gelfond = 23.140692; // e^pi (Gelfond constant)
+const float GelfondSchneider = 2.6651442; // 2^sqrt(2) (Gelfond-Schneider constant)
+
+// www.stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader/
+float random(vec2 seed)
+{
+    // use irrationals for pseudo randomness
+    vec2 i = vec2(Gelfond, GelfondSchneider);
+
+    return fract(cos(dot(seed, i)) * 123456.0);
+}
+
 // Applies a normalized sigmoid function to the given value.
 //   The input parameters have to be in the range of [-1.0, 1.0].
 // @value: the value to transform
@@ -80,7 +95,7 @@ bool is_portrait(vec2 size)
 //   e.g. global.OutputSize
 float get_orientation(vec2 size)
 {
-    return float(is_portrait(size));   
+    return float(is_portrait(size));
 }
 
 // Returns the orientation based on the largest dimension of the given size.
@@ -96,7 +111,7 @@ float get_orientation(vec2 size, float orientation)
 {
     return orientation > 0.0
         ? orientation - 1.0
-        : get_orientation(size);   
+        : get_orientation(size);
 }
 
 // Returns the ratio of the size based on the dominant dimension.
@@ -120,9 +135,30 @@ float get_ratio(vec2 size)
     return get_ratio(size, get_orientation(size));
 }
 
+// Returns the base size based on the dominant orientation.
+// @size: the size to test
+//   e.g. global.SourceSize
+// @orientation: the orientation of the dominant dimension
+//   0 - horizontal
+//   1 - vertical
+float get_base_size(vec2 size, float orientation)
+{
+    return orientation > 0.0
+        ? size.x
+        : size.y;
+}
+
+// Returns the base size based on the dominant orientation.
+// @size: the size to test
+//   e.g. global.SourceSize
+float get_base_size(vec2 size)
+{
+    return get_base_size(size, get_orientation(size));
+}
+
 #ifndef BASE_SIZE
     // The base size to compute the multiple from the source size.
-    #define BASE_SIZE 270.0
+    #define BASE_SIZE 240.0
 #endif
 
 #ifndef OUTPUT_SIZE
@@ -211,15 +247,10 @@ float get_multiple_factor(float index, float amount)
 float get_multiple(vec2 size, float orientation, float offset, float pixel_size_limit)
 {
     float multiple = get_multiple(size, orientation);
-    float ratio = get_ratio(size, orientation);
+    float multiple_index = max(1.0, round(multiple)) - 1.0;
 
-    float multiple_index = multiple < 1.0 && ratio < 0.5
-        ? -max(1.0, round(1.0 / multiple)) + 1.0 
-        :  max(1.0, round(multiple)) - 1.0;
-
-    multiple_index = multiple_index
-        + multiple_base
-        + offset;
+    multiple_index += multiple_base;
+    multiple_index += offset;
 
     float scale = orientation > 0.0
         ? OUTPUT_SIZE.x / size.x
@@ -229,8 +260,7 @@ float get_multiple(vec2 size, float orientation, float offset, float pixel_size_
         // apply factional offset
         multiple = get_multiple_factor(multiple_index, fract(offset));
 
-        // ensure applied multiple results
-        // in a pixel size not smaller than the given limit
+        // break at a multiple which results in a pixel size larger/equal the given limit
         if ((scale * multiple) >= pixel_size_limit)
         {
             break;
@@ -267,30 +297,18 @@ float get_multiple_stepwise(vec2 size, float orientation, float offset)
     return get_multiple(size, orientation, offset, PIXEL_SIZE_LIMIT);
 }
 
-// Decodes the gamma of the given color in respect to the specified contrast.
+// Decodes the gamma of the given color.
 // @color - the color.
-// @contrast - the contrast to apply.
-vec3 decode_gamma(vec3 color, float contrast)
+vec3 decode_gamma(vec3 color)
 {
-    float i = contrast;
-    float o = 2.2;
-
-    float gamma = o + (i / 2.0);
-
-    return rgb_to_srgb_fast(color, gamma);
+    return srgb_to_linear(color, 2.4);
 }
 
-// Encodes the gamma of the given color in respect to the specified contrast.
+// Encodes the gamma of the given color.
 // @color - the color.
-// @contrast - the contrast to apply.
-vec3 encode_gamma(vec3 color, float contrast)
+vec3 encode_gamma(vec3 color)
 {
-    float i = contrast;
-    float o = 2.2;
-
-    float gamma = o - (i / 2.0);
-
-    return srgb_to_rgb_fast(color, gamma);
+    return linear_to_srgb(color, 2.4);
 }
 
 // Returns the maximum value of the given color.
@@ -300,12 +318,38 @@ float max_color(vec3 color)
     return max(max(color.r, color.g), color.b);
 }
 
-// Normalizes the given color based on a reference color.
+// Normalizes the given color based on a reference color value.
 // @color - the color.
-// @reference - the reference color.
-vec3 normalize_color(vec3 color, vec3 reference)
+// @reference - the reference color value.
+vec3 normalize_color(vec3 color, float reference)
 {
-    return color / (max_color(color) + EPSILON) * max_color(reference);
+    return color / (max_color(color) + EPSILON) * reference;
+}
+
+// Applies the contrast to the given color.
+// @color - the color.
+// @contrast - the contrast to apply.
+//   <0.0 - decreasing
+//    0.0 - unchanged
+//   >0.0 - increasing
+vec3 apply_contrast(vec3 color, float contrast)
+{
+    float linear_max = max_color(color);
+
+    float nonlinear_max = linear_max;
+
+    // move range [0, 1] to [-1, 1]
+    nonlinear_max = 2.0 * nonlinear_max - 1.0;
+
+    // apply non-linear mapping
+    nonlinear_max = sin(nonlinear_max * PIo2);
+
+    // move range [-1, 1] to [0, 1]
+    nonlinear_max = (nonlinear_max + 1.0) * 0.5;
+
+    return normalize_color(
+        color,
+        mix(linear_max, nonlinear_max, contrast));
 }
 
 // Applies the brightness to the given color.
@@ -315,17 +359,46 @@ vec3 apply_brightness(vec3 color, float brightness)
 {
     return color * (1.0 + brightness);
 }
+float apply_brightness(float color, float brightness)
+{
+    return color * (1.0 + brightness);
+}
 
 // Applies the saturation to the given color.
 // @color - the color.
-// @brightness - the saturation to apply.
+// @saturation - the saturation to apply.
+//   <0.0 - decreasing
+//    0.0 - unchanged
+//   >0.0 - increasing
 vec3 apply_saturation(vec3 color, float saturation)
 {
-    float luma = get_luminance(color);
+    float luminance = get_luminance(color);
 
     return saturation > 1.0
-        ? normalize_color(pow(color, vec3(saturation)), color)
-        : mix(vec3(luma), color, saturation);
+        // increase
+        ? normalize_color(pow(color, vec3(saturation)), max_color(color))
+        // decrease
+        : mix(vec3(luminance), color, saturation);
+}
+
+// Applies the temperature to the given color based on the given white point.
+// @color - the color.
+// @white_point_relative - the relative white point to apply.
+//   -1.0 - D55
+//    0.0 - D65
+//    1.0 - D75
+vec3 apply_temperature(vec3 color, float white_point_relative)
+{
+    mat3 white_point = white_point_relative < 0.0
+        // warmer
+        ? D65toD55
+        // cooler
+        : D65toD75;
+
+    return mix(
+        color,
+        color * RGBtoXYZ * white_point * XYZtoRGB,
+        abs(white_point_relative));
 }
 
 #endif // UTILITIES_DEFINDED

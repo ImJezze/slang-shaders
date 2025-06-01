@@ -1,3 +1,0 @@
-// Deconverge parameters
-DECONVERGE_LINEAR = 0.75
-DECONVERGE_RADIAL = -0.25

@@ -22,9 +22,6 @@ layout(std140, set = 0, binding = 0) uniform UBO
 layout (push_constant) uniform Push
 {
     float GLOBAL_MASTER;
-    float SCREEN_SCALE;
-    float SCREEN_OFFSET;
-    float SCREEN_ORIENTATION;
     float PHOSPHOR_AMOUNT;
     float PHOSPHOR_DECAY;
 } param;
@@ -50,8 +47,8 @@ layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 layout(set = 0, binding = 3) uniform sampler2D PhosphorPassFeedback;
 
-#define INPUT(color) rgb_to_srgb_fast(color)
-#define OUTPUT(color) srgb_to_rgb_fast(color)
+#define INPUT(color) decode_gamma(color)
+#define OUTPUT(color) encode_gamma(color)
 
 void main()
 {

@@ -17,9 +17,6 @@ layout(std140, set = 0, binding = 0) uniform UBO
 layout (push_constant) uniform Push
 {
     float GLOBAL_MASTER;
-    float SCREEN_SCALE;
-    float SCREEN_OFFSET;
-    float SCREEN_ORIENTATION;
     float HALATION_INTENSITY;
     float HALATION_DIFFUSION;
 } param;
@@ -41,10 +38,12 @@ void main()
     gl_Position = global.MVP * Position;
     TexCoord = Coord;
 
-    Diffusion = normalized_sigmoid(PARAM_HALATION_DIFFUSION, -0.5);
-    Diffusion = max(0.02, 1.0 - Diffusion);
+    // invert parameter, avoid 0
+    Diffusion = sqrt(PARAM_HALATION_DIFFUSION);
+    Diffusion = max(1.0 / 16.0, 1.0 - Diffusion);
 
-    Tabs = normalized_sigmoid(PARAM_HALATION_DIFFUSION, 0.5) * 16.0;
+    // 4 to 16 tabs
+    Tabs = PARAM_HALATION_DIFFUSION * PARAM_HALATION_DIFFUSION * 16.0;
     Tabs = max(4.0, round(Tabs));
 
     Multiple = get_multiple(global.SourceSize.xy);
@@ -59,8 +58,8 @@ layout(location = 3) in float Multiple;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 
-#define INPUT(color) rgb_to_srgb_fast(color)
-#define OUTPUT(color) srgb_to_rgb_fast(color)
+#define INPUT(color) decode_gamma(color)
+#define OUTPUT(color) encode_gamma(color)
 
 void main()
 {

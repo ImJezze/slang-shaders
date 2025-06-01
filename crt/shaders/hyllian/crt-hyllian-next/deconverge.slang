@@ -18,7 +18,6 @@ layout (push_constant) uniform Push
 {
     float GLOBAL_MASTER;
     float SCREEN_SCALE;
-    float SCREEN_OFFSET;
     float SCREEN_ORIENTATION;
     float DECONVERGE_LINEAR;
     float DECONVERGE_RADIAL;
@@ -41,7 +40,7 @@ void main()
     gl_Position = global.MVP * Position;
 
     float screen_orientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
-    float screen_scale = get_multiple(global.OriginalSize.xy, screen_orientation, -PARAM_SCREEN_SCALE);
+    float screen_scale = get_multiple_stepwise(global.OriginalSize.xy, screen_orientation, -PARAM_SCREEN_SCALE);
 
     // limit deconverge to range of [-1.0, 1.0]
     float linear_limit = PARAM_DECONVERGE_LINEAR > 0
@@ -97,8 +96,8 @@ layout(location = 3) in vec2 TexCoordB;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 
-#define INPUT(color) rgb_to_srgb_fast(color)
-#define OUTPUT(color) srgb_to_rgb_fast(color)
+#define INPUT(color) decode_gamma(color)
+#define OUTPUT(color) encode_gamma(color)
 
 void main()
 {
