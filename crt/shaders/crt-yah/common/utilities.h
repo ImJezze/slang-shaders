@@ -364,6 +364,17 @@ float apply_brightness(float color, float brightness)
     return color * (1.0 + brightness);
 }
 
+// Applies a minimum value to the given color.
+// @color - the color.
+// @floot - the minimum value.
+vec3 apply_floor(vec3 color, float floor)
+{
+    float luma = get_luminance(color);
+    floor *= 1.0 - luma;
+
+    return (color + floor) / (1.0 + floor);
+}
+
 // Applies the saturation to the given color.
 // @color - the color.
 // @saturation - the saturation to apply.

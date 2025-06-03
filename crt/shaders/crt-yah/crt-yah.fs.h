@@ -1,6 +1,6 @@
 /*
     Yah! - Yet Another Hyllian
-    Based on the CRT shader by Hyllian
+    Based on CRT shader by Hyllian
     Modified by Jezze
 
     Copyright (C) 2011-2025 Hyllian - sergiogdb@gmail.com
@@ -152,10 +152,10 @@ vec3 get_half_scanlines_factor(vec3 color, float position)
 vec3 get_half_beam_color(sampler2D source, vec2 tex_coord, vec2 delta_x, vec2 delta_y, vec4 beam_filter)
 {
     // get spline bases
-    vec3 x = INPUT(texture(source, tex_coord -       delta_x - delta_y).xyz);
-    vec3 y = INPUT(texture(source, tex_coord                 - delta_y).xyz);
-    vec3 z = INPUT(texture(source, tex_coord +       delta_x - delta_y).xyz);
-    vec3 w = INPUT(texture(source, tex_coord + 2.0 * delta_x - delta_y).xyz);
+    vec3 x = INPUT(texture(source, tex_coord -       delta_x - delta_y).rgb);
+    vec3 y = INPUT(texture(source, tex_coord                 - delta_y).rgb);
+    vec3 z = INPUT(texture(source, tex_coord +       delta_x - delta_y).rgb);
+    vec3 w = INPUT(texture(source, tex_coord + 2.0 * delta_x - delta_y).rgb);
 
     // get color from spline
     vec3 color = mat4x3(x, y, z, w) * beam_filter;
@@ -173,7 +173,7 @@ vec3 get_half_beam_color(sampler2D source, vec2 tex_coord, vec2 delta_x, vec2 de
 
 vec3 get_raw_color(sampler2D source, vec2 tex_coord)
 {
-    return INPUT(texture(source, tex_coord).xyz);
+    return INPUT(texture(source, tex_coord).rgb);
 }
 
 vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
@@ -330,13 +330,13 @@ vec3 apply_color_overflow(vec3 color)
 
 vec3 apply_halation(vec3 color, sampler2D source, vec2 tex_coord)
 {
-    vec3 halation = INPUT(texture(source, tex_coord).xyz);
+    vec3 halation = INPUT(texture(source, tex_coord).rgb);
 
-    // add half the difference between color and halation
-    return color + ((abs(halation - color) / 2.0) * PARAM_HALATION_INTENSITY);
+    // add the difference between color and halation
+    return color + abs(halation - color) * PARAM_HALATION_INTENSITY * 0.25;
 }
 
-vec3 apply_noise(vec3 color, vec2 tex_coord)
+vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
 {
     vec2 pix_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
 
@@ -345,12 +345,15 @@ vec3 apply_noise(vec3 color, vec2 tex_coord)
 
     // repeat every 20 frames with 12fps (60fps * 0.2)
     float frame = mod(floor(global.FrameCount * 0.2), 20);
-    float random = random(pix_coord * (frame + 1.0));
+    float noise = random(pix_coord * (frame + 1.0));
+
+    float mul_noise = noise * 2.0;
+    float add_noise = noise * (1.0 - color_luma) * (8.0 / 256.0 - PARAM_FLOOR);
 
     return mix(
         color,
-        color * random * 2.0,
-        PARAM_CRT_NOISE_AMOUNT * 0.5);
+        color * mul_noise + add_noise,
+        (1.0 - color_luma) * PARAM_CRT_NOISE_AMOUNT * 0.25);
 }
 
 vec3 apply_brightness_compensation(vec3 color, float color_luma)

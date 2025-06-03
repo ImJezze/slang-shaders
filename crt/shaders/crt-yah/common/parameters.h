@@ -1,3 +1,5 @@
+//#define DEBUG
+
 // Global parameters
 #pragma parameter GLOBAL_MASTER "·  Global > ¹Master  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.05
 
@@ -6,7 +8,7 @@
 #pragma parameter COLOR_TEMPERATUE "   Color > Temperature¹  (-D55 / D65 / +D75)" 0.0 -1.0 1.0 0.1
 #pragma parameter COLOR_SATURATION "   Color > Saturation¹  (0-Low .. 2-High)" 1.0 0.0 2.0 0.05
 #pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower / +Higher)" 0.5 -1.0 1.0 0.05
-#pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken / +Lighten)" 0.25 -1.0 2.0 0.05
+#pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken / +Lighten)" 0.25 -1.0 1.0 0.05
 #pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.25
 #pragma parameter COLOR_COMPENSATION "   Color > ²Brightnes Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
@@ -41,12 +43,12 @@
 
 // Halation parameters
 #pragma parameter HALATION_INTENSITY "·  Halation > Intensity¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
-#pragma parameter HALATION_DIFFUSION "   Halation > Diffusion  (0-Low .. 1-High)" 0.5 0.0 1.0 0.05
+#pragma parameter HALATION_DIFFUSION "   Halation > Diffusion  (0-Low .. 1-High)" 0.75 0.0 1.0 0.05
 
 // CRT parameters
 #pragma parameter CRT_CURVATURE_AMOUNT "·  CRT > Curvature¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 #pragma parameter CRT_VIGNETTE_AMOUNT "   CRT > Vignette¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
-#pragma parameter CRT_NOISE_AMOUNT "   CRT > Noise¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
+#pragma parameter CRT_NOISE_AMOUNT "   CRT > Noise¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
 #pragma parameter CRT_CORNER_RAIDUS "   CRT > Corner Radius¹  (0-None .. 25%)" 0.0 0.0 0.25 0.01
 #pragma parameter CRT_CORNER_SMOOTHNESS "   CRT > Corner Smoothness  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 
@@ -57,13 +59,23 @@
 #pragma parameter INFO1 "¹ Reduces marked effects" 0.0 0.0 0.0 0.0
 #pragma parameter INFO2 "² Compensates brightness changes of marked effects" 0.0 0.0 0.0 0.0
 
-float mix_master(float value, float default_value, float minimum, float maximum)
+float mix_master(float value, float off_value, float min_value, float max_value)
 {
     return param.GLOBAL_MASTER > 1.0
-        ? mix(value, clamp((value - default_value * 0.5) * param.GLOBAL_MASTER, min(value, minimum), max(value, maximum)), param.GLOBAL_MASTER - 1.0)
-        : mix(default_value, value, param.GLOBAL_MASTER);
+        ? mix(
+            value,
+            clamp(
+                (value - off_value * 0.5) * param.GLOBAL_MASTER,
+                min(value, min_value),
+                max(value, max_value)),
+            (param.GLOBAL_MASTER - 1.0) * 0.75)
+        : mix(
+            off_value,
+            value,
+            param.GLOBAL_MASTER);
 }
 
+#define PARAM_FLOOR max(PARAM_SCANLINES_STRENGTH, PARAM_MASK_INTENSITY) * (2.0 / 256.0)
 #define PARAM_SCREEN_ORIENTATION param.SCREEN_ORIENTATION
 #define PARAM_SCREEN_SCALE param.SCREEN_SCALE
 #define PARAM_NTSC_PROFILE param.NTSC_PROFILE
@@ -73,13 +85,13 @@ float mix_master(float value, float default_value, float minimum, float maximum)
 #define PARAM_PHOSPHOR_AMOUNT mix_master(param.PHOSPHOR_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_PHOSPHOR_DECAY param.PHOSPHOR_DECAY
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
-#define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 2.0)
+#define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 1.0)
 #define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
 #define PARAM_COLOR_CONTRAST mix_master(param.COLOR_CONTRAST, 0.0, -1.0, 1.0)
 #define PARAM_COLOR_SATURATION mix_master(param.COLOR_SATURATION, 1.0, 0.0, 2.0)
 #define PARAM_COLOR_TEMPERATUE mix_master(param.COLOR_TEMPERATUE, 0.0, -1.0, 1.0)
 #define PARAM_COLOR_PROFILE mix_master(param.COLOR_PROFILE, 0.0, -1.0, 1.0)
-#define PARAM_MASK_INTENSITY mix_master(param.MASK_INTENSITY, 0.0, -1.0, 1.0)
+#define PARAM_MASK_INTENSITY mix_master(param.MASK_INTENSITY, 0.0, 0.0, 1.0)
 #define PARAM_MASK_OPACITY param.MASK_OPACITY
 #define PARAM_MASK_SIZE param.MASK_SIZE
 #define PARAM_MASK_TYPE param.MASK_TYPE

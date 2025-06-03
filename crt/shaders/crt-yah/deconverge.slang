@@ -102,6 +102,16 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 void main()
 {
     vec3 color = INPUT(texture(Source, TexCoord).rgb);
+
+#ifdef DEBUG
+    if (TexCoord.x < 0.5)
+    {
+        FragColor = vec4(encode_gamma(color), 1.0);
+
+        return;
+    }
+#endif
+
     vec3 deconverge_color = vec3(
         INPUT(texture(Source, TexCoordR).rgb).r,
         INPUT(texture(Source, TexCoordG).rgb).g,

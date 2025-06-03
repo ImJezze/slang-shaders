@@ -2,7 +2,7 @@
 
 /*
     Yah! - Yet Another Hyllian
-    Based on the CRT shader by Hyllian
+    Based on CRT shader by Hyllian
     Modified by Jezze
 */
 
@@ -53,7 +53,10 @@ layout (push_constant) uniform Push
 #include "common/parameters.h"
 #include "common/utilities.h"
 
-#define INPUT(color) decode_gamma(color)
+#define INPUT(color)                           \
+    apply_floor(                               \
+        decode_gamma(color),                   \
+        PARAM_FLOOR)
 #define OUTPUT(color)                          \
     encode_gamma(                              \
         apply_temperature(                     \
@@ -127,14 +130,23 @@ void main()
     vec2 tex_coord_curved = apply_cubic_lens_distortion(tex_coord);
     vec2 tex_coord_curved_sharpend = apply_sharp_bilinear_filtering(tex_coord_curved);
 
+#ifdef DEBUG
+    if (tex_coord.x < 0.5)
+    {
+        FragColor = texture(TextureSource, tex_coord_curved_sharpend);
+
+        return;
+    }
+#endif
+
     vec3 raw_color = get_raw_color(TextureSource, tex_coord_curved_sharpend);
     vec3 scanlines_color = get_scanlines_color(TextureSource, tex_coord_curved);
 
     vec3 color = blend_colors(raw_color, scanlines_color);
     float color_luma = get_luminance(color);
 
-    color = apply_mask(color, color_luma, tex_coord); // use un-curved coordinates to avoid Moire-artefacts
-    color = apply_noise(color, tex_coord); // use un-curved coordinates to avoid Moire-artefacts
+    color = apply_noise(color, color_luma, tex_coord); // use un-curved coordinates to avoid Moire-artefacts
+    color = apply_mask(color, color_luma, tex_coord);  // use un-curved coordinates to avoid Moire-artefacts
     color = apply_color_overflow(color);
     color = apply_halation(color, HalationSource, tex_coord_curved); // apply after mask & color overflow
     color = apply_brightness_compensation(color, color_luma);

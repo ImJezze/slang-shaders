@@ -1,10 +1,10 @@
 /*
     Yah! - Yet Another Hyllian
-    Based on the CRT shader by Hyllian
+    Based on CRT shader by Hyllian
     Modified by Jezze
 
     Copyright (C) 2011-2025 Hyllian - sergiogdb@gmail.com
-    Copyright (C) 2025 Jezze - jezze@gmx.net
+    Copyright (C) 2023-2025 Jezze - jezze@gmx.net
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
