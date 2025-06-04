@@ -348,7 +348,7 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
     float noise = random(pix_coord * (frame + 1.0));
 
     float mul_noise = noise * 2.0;
-    float add_noise = noise * (1.0 - color_luma) * (8.0 / 256.0 - PARAM_FLOOR);
+    float add_noise = noise * (1.0 - color_luma) * (4.0 / 256.0 - PARAM_COLOR_FLOOR);
 
     return mix(
         color,

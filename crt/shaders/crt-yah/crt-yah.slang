@@ -56,7 +56,7 @@ layout (push_constant) uniform Push
 #define INPUT(color)                           \
     apply_floor(                               \
         decode_gamma(color),                   \
-        PARAM_FLOOR)
+        PARAM_COLOR_FLOOR)
 #define OUTPUT(color)                          \
     encode_gamma(                              \
         apply_temperature(                     \

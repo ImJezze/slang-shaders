@@ -14,7 +14,7 @@
 
 // Scanline/beam parameters
 #pragma parameter SCANLINES_STRENGTH "·  Scanlines > Strength¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter SCANLINES_OFFSET "   Scanlines > Offset  (-with / +without Jitter)" 0.0 -2.0 2.0 0.25
+#pragma parameter SCANLINES_OFFSET "   Scanlines > Offset  (-with / +without Jitter)" -0.25 -2.0 2.0 0.25
 #pragma parameter BEAM_WIDTH_MIN "   Scanlines > Beam Min. Width  (less-Shrink .. 1-Full)" 0.25 0.0 1.0 0.05
 #pragma parameter BEAM_WIDTH_MAX "   Scanlines > Beam Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
 #pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape²  (0-Sharp .. 1-Smooth)" 1.0 0.0 1.0 0.25
@@ -75,7 +75,6 @@ float mix_master(float value, float off_value, float min_value, float max_value)
             param.GLOBAL_MASTER);
 }
 
-#define PARAM_FLOOR max(PARAM_SCANLINES_STRENGTH, PARAM_MASK_INTENSITY) * (2.0 / 256.0)
 #define PARAM_SCREEN_ORIENTATION param.SCREEN_ORIENTATION
 #define PARAM_SCREEN_SCALE param.SCREEN_SCALE
 #define PARAM_NTSC_PROFILE param.NTSC_PROFILE
@@ -84,6 +83,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 #define PARAM_DECONVERGE_RADIAL mix_master(param.DECONVERGE_RADIAL, 0.0, -2.0, 2.0)
 #define PARAM_PHOSPHOR_AMOUNT mix_master(param.PHOSPHOR_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_PHOSPHOR_DECAY param.PHOSPHOR_DECAY
+#define PARAM_COLOR_FLOOR max(PARAM_SCANLINES_STRENGTH, PARAM_MASK_INTENSITY) * (1.0 / 256.0)
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
 #define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 1.0)
 #define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
