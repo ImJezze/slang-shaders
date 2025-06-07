@@ -23,8 +23,7 @@ layout (push_constant) uniform Push
     float COLOR_PROFILE;
 } param;
 
-#include "common/parameters.h"
-#include "common/colorspace-srgb.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;

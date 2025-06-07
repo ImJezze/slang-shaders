@@ -26,9 +26,7 @@ layout (push_constant) uniform Push
     float PHOSPHOR_DECAY;
 } param;
 
-#include "common/parameters.h"
-#include "common/utilities.h"
-#include "common/colorspace-srgb.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -49,6 +47,8 @@ layout(set = 0, binding = 3) uniform sampler2D PhosphorPassFeedback;
 
 #define INPUT(color) decode_gamma(color)
 #define OUTPUT(color) encode_gamma(color)
+
+#include "common/colorspace-srgb.h"
 
 void main()
 {

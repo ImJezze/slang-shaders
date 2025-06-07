@@ -2,10 +2,9 @@
 
 #define SUBPIXEL_COLOR_DEFINDED
 
-#include "colorspace-srgb.h"
-#include "utilities.h"
+#include "geometry-helper.h"
 
-#define EPSILON 0.000001
+#define EPSILON 0.0000001
 
 const vec3 White = vec3(1.0, 1.0, 1.0);
 const vec3 Black = vec3(0.0, 0.0, 0.0);
@@ -303,7 +302,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
 
-        bounds = vec2(1.0, 10000.0);
+        bounds = vec2(1.0, 1024.0 * 8.0);
     }
     // Slot-mask
     else if (type == 2)
@@ -405,7 +404,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
 
     color *= smooth_round_box(
         fract(pixCoord / bounds),
-        bounds * 1000,
+        bounds * 1024.0,
         scale,
         radius,
         smoothness);

@@ -22,10 +22,10 @@
     THE SOFTWARE.
 */
 
+#include "common/screen-helper.h"
 #include "common/utilities.h"
-#include "common/colorspace-srgb.h"
 
-float get_subpixel_size(float screen_multiple)
+vec2 get_mask_profile()
 {
     float pixel_size = global.SourceSize.x < global.SourceSize.y 
         ? global.FinalViewportSize.x / global.SourceSize.x
@@ -38,24 +38,21 @@ float get_subpixel_size(float screen_multiple)
         : 4.0;
 
     // auto
-    float subpixel_size = pixel_size / subpixel_count * screen_multiple;
+    float subpixel_size = pixel_size / subpixel_count * INPUT_SCREEN_MULTIPLE;
     // manual correction
     subpixel_size += PARAM_MASK_SIZE;
     // limit
     subpixel_size = floor(max(1.0, subpixel_size));
-
-    return subpixel_size;
-}
-
-float get_subpixel_smoothness(float subpixel_size)
-{
-    return
+    
+    float subpixel_smoothness =
         // aperture-grille for size > 1
         PARAM_MASK_TYPE == 1 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
         // slot-mask for size > 1
         PARAM_MASK_TYPE == 2 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
         // shadow-mask for size > 2
         PARAM_MASK_TYPE == 3 ? clamp((subpixel_size - 2.0) * 0.25, 0.0, 1.0) : 0.0;
+
+    return vec2(subpixel_size, subpixel_smoothness);
 }
 
 float get_brightness_compensation()

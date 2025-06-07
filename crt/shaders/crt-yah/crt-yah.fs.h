@@ -22,9 +22,25 @@
     THE SOFTWARE.
 */
 
-#include "common/utilities.h"
-#include "common/colorspace-srgb.h"
+#include "common/color-helper.h"
 #include "common/subpixel-color.h"
+#include "common/utilities.h"
+
+#define INPUT(color)         \
+    apply_floor(             \
+        decode_gamma(color), \
+        PARAM_COLOR_FLOOR)
+#define OUTPUT(color)                          \
+    encode_gamma(                              \
+        apply_temperature(                     \
+            apply_saturation(                  \
+                apply_brightness(              \
+                    apply_contrast(            \
+                        color,                 \
+                        PARAM_COLOR_CONTRAST), \
+                    PARAM_COLOR_BRIGHTNESS),   \
+                PARAM_COLOR_SATURATION),       \
+            PARAM_COLOR_TEMPERATUE))
 
 // orientation-aware vec2 constructors
 vec2 vec2o(vec2 v)
@@ -274,14 +290,18 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
         : int(PARAM_MASK_COLOR_COUNT);
     bool color_swap = PARAM_MASK_COLOR_COUNT < 1.0;
 
+    float subpixel_mask = PARAM_MASK_TYPE;
+    float subpixel_size = INPUT_MASK_PROFILE.x;
+    float subpixel_smoothness = INPUT_MASK_PROFILE.y;
+
     vec3 mask = get_subpixel_color(
         pix_coord,
-        int(INPUT_SUBPIXEL_SIZE),
-        int(PARAM_MASK_TYPE),
+        int(subpixel_size),
+        int(subpixel_mask),
         color_count,
         color_swap,
         1.0,
-        INPUT_SUBPIXEL_SMOOTHNESS);
+        subpixel_smoothness);
     float mask_luma = get_luminance(mask);
 
     // apply color bleed to neighbor sub-pixel
@@ -338,10 +358,12 @@ vec3 apply_halation(vec3 color, sampler2D source, vec2 tex_coord)
 
 vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
 {
+    float subpixel_size = INPUT_MASK_PROFILE.x;
+
     vec2 pix_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
 
     // scale noise based on mask's sub-pixel size
-    pix_coord = floor(pix_coord / int(INPUT_SUBPIXEL_SIZE)) * int(INPUT_SUBPIXEL_SIZE);
+    pix_coord = floor(pix_coord / int(subpixel_size)) * int(subpixel_size);
 
     // repeat every 20 frames with 12fps (60fps * 0.2)
     float frame = mod(floor(global.FrameCount * 0.2), 20);

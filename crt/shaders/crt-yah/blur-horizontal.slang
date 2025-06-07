@@ -21,9 +21,7 @@ layout (push_constant) uniform Push
     float HALATION_DIFFUSION;
 } param;
 
-#include "common/parameters.h"
-#include "common/utilities.h"
-#include "common/colorspace-srgb.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -32,6 +30,8 @@ layout(location = 0) out vec2 TexCoord;
 layout(location = 1) out float Diffusion;
 layout(location = 2) out float Tabs;
 layout(location = 3) out float Multiple;
+
+#include "common/screen-helper.h"
 
 void main()
 {
@@ -57,6 +57,8 @@ layout(location = 2) in float Tabs;
 layout(location = 3) in float Multiple;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
+
+#include "common/colorspace-srgb.h"
 
 #define INPUT(color) decode_gamma(color)
 #define OUTPUT(color) encode_gamma(color)

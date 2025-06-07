@@ -84,4 +84,18 @@ vec3 linear_to_srgb(vec3 color, float gamma)
         linear_to_srgb(color.b, gamma));
 }
 
+// Decodes the gamma of the given color.
+// @color - the color.
+vec3 decode_gamma(vec3 color)
+{
+    return srgb_to_linear(color, 2.4);
+}
+
+// Encodes the gamma of the given color.
+// @color - the color.
+vec3 encode_gamma(vec3 color)
+{
+    return linear_to_srgb(color, 2.4);
+}
+
 #endif // COLORSPACE_SRGB_DEFINDED

@@ -6,7 +6,7 @@
 
 #include "common/colorspace-yiq.h"
 
-#define PI 3.14159265
+#define PI 3.1415926
 
 vec3 pass1(vec3 yiq, vec2 pixCoord, int phase, mat3 mix, uint frameCount)
 {

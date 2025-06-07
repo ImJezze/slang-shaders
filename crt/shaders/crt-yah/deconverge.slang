@@ -23,9 +23,7 @@ layout (push_constant) uniform Push
     float DECONVERGE_RADIAL;
 } param;
 
-#include "common/parameters.h"
-#include "common/utilities.h"
-#include "common/colorspace-srgb.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -34,6 +32,8 @@ layout(location = 0) out vec2 TexCoord;
 layout(location = 1) out vec2 TexCoordR;
 layout(location = 2) out vec2 TexCoordG;
 layout(location = 3) out vec2 TexCoordB;
+
+#include "common/screen-helper.h"
 
 void main()
 {
@@ -98,6 +98,8 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 
 #define INPUT(color) decode_gamma(color)
 #define OUTPUT(color) encode_gamma(color)
+
+#include "common/colorspace-srgb.h"
 
 void main()
 {

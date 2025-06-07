@@ -37,9 +37,7 @@ layout (push_constant) uniform Push
     float NTSC_QUALITY;
 } param;
 
-#include "common/parameters.h"
-#include "common/utilities.h"
-#include "ntsc-pass2.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -47,6 +45,8 @@ layout(location = 1) in vec2 Coord;
 layout(location = 0) out vec2 TexCoord;
 layout(location = 1) out vec2 ScanTexelSize;
 layout(location = 2) out float Phase;
+
+#include "common/screen-helper.h"
 
 void main()
 {
@@ -72,6 +72,8 @@ layout(location = 1) in vec2 ScanTexelSize;
 layout(location = 2) in float Phase;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
+
+#include "ntsc-pass2.h"
 
 void main()
 {

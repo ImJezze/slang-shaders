@@ -37,9 +37,7 @@ layout (push_constant) uniform Push
     float NTSC_QUALITY;
 } param;
 
-#include "common/parameters.h"
-#include "common/utilities.h"
-#include "ntsc-pass1.h"
+#include "parameters.h"
 
 #pragma stage vertex
 layout(location = 0) in vec4 Position;
@@ -50,6 +48,8 @@ layout(location = 2) out float Fringing;
 layout(location = 3) out float Artifacting;
 layout(location = 4) out float Phase;
 layout(location = 5) out float Merge;
+
+#include "common/screen-helper.h"
 
 void main()
 {
@@ -95,6 +95,8 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
     1.0, Fringing, Fringing, \
     Artifacting, 2.0, 0.0,   \
     Artifacting, 0.0, 2.0)
+
+#include "ntsc-pass1.h"
 
 void main()
 {
