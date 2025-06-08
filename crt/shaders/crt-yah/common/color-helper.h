@@ -32,8 +32,8 @@ vec3 apply_scale(vec3 color, float scale)
 //   >0.0 - increasing
 vec3 apply_contrast(vec3 color, float contrast)
 {
-    float linear = length(color);
-
+    float linear = min(1.0, length(color));
+    
     float nonlinear = linear;
 
     // move range [0, 1] to [-1, 1]
