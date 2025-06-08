@@ -15,46 +15,26 @@ const vec3 Magenta = vec3(1.0, 0.0, 1.0);
 const vec3 Yellow = vec3(1.0, 1.0, 0.0);
 const vec3 Cyan = vec3(0.0, 1.0, 1.0);
 
+// Returns an offset to shift the given pixel coordinate by the amount of x for every second y-block.
+// @pixCoord - the pixel coordinate
+// @x - the amount to shift the x-coordinate 
+// @y - the size of a y-block
 vec2 shift_x_every_y(vec2 pixCoord, float x, float y)
-{
-    return vec2(
-        mix(0.0, x, floor(pixCoord.y / y)),
-        0.0);
-}
-
-vec2 shift_x_all_y(vec2 pixCoord, float x, float y)
 {
     return vec2(
         mix(0.0, x, floor(mod(pixCoord.y / y, 2.0))),
         0.0);
 }
 
-vec2 shift_x_each_y(vec2 pixCoord, float x, float y)
-{
-    return vec2(
-        mix(0.0, x, floor(max(0.0, mod(pixCoord.y, y) - (y - 2.0)))),
-        0.0);
-}
-
+// Returns an offset to shift the given pixel coordinate by the amount of y for every second x-block.
+// @pixCoord - the pixel coordinate
+// @y - the amount to shift the y-coordinate 
+// @x - the size of a x-block
 vec2 shift_y_every_x(vec2 pixCoord, float y, float x)
 {
     return vec2(
         0.0,
-        mix(0.0, y, floor(pixCoord.x / x)));
-}
-
-vec2 shift_y_all_x(vec2 pixCoord, float y, float x)
-{
-    return vec2(
-        0.0,
         mix(0.0, y, floor(mod(pixCoord.x / x, 2.0))));
-}
-
-vec2 shift_y_each_x(vec2 pixCoord, float y, float x)
-{
-    return vec2(
-        0.0,
-        mix(0.0, y, floor(max(0.0, mod(pixCoord.x, x) - (x - 2.0)))));
 }
 
 int get_index(float pixCoord, int count)
@@ -159,7 +139,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // magenta, green
         if (colors == 0 || colors == 1)
         {
-            pixCoord += shift_y_all_x(pixCoord, 2.0, 2.0);
+            pixCoord += shift_y_every_x(pixCoord, 2.0, 2.0);
 
             color = get_index(pixCoord.y, 4) == 0
                 ? c4
@@ -169,7 +149,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // red, green, blue
         else if (colors == 2 || colors == 3)
         {
-            pixCoord += shift_y_all_x(pixCoord, 2.0, 3.0);
+            pixCoord += shift_y_every_x(pixCoord, 2.0, 3.0);
 
             color = get_index(pixCoord.y, 4) == 0
                 ? c4
@@ -178,7 +158,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // red, green, blue, black
         else if (colors == 4)
         {
-            pixCoord += shift_y_all_x(pixCoord, 2.0, 4.0);
+            pixCoord += shift_y_every_x(pixCoord, 2.0, 4.0);
 
             color = get_index(pixCoord.y, 4) == 0
                 ? c4
@@ -192,7 +172,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // magenta, green
         if(colors == 0 || colors == 1)
         {
-            pixCoord += shift_x_all_y(pixCoord, 1.0, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 1.0, 1.0);
 
             color = get_subpixel_color(pixCoord, c1, c2);
         }
@@ -200,7 +180,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // reg, green, blue
         else if (colors == 2 || colors == 3)
         {
-            pixCoord += shift_x_all_y(pixCoord, 1.5, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 1.5, 1.0);
             pixCoord.x *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
 
             color = get_subpixel_color(pixCoord, c1, c2, c3);
@@ -208,7 +188,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // reg, green, blue, black
         else if (colors == 4)
         {
-            pixCoord += shift_x_all_y(pixCoord, 2.0, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 2.0, 1.0);
 
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
@@ -302,7 +282,8 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
 
-        bounds = vec2(1.0, 1024.0 * 8.0);
+        // for max 8K vertical resolution
+        bounds = vec2(1.0, 1080.0 * 8.0);
     }
     // Slot-mask
     else if (type == 2)
@@ -332,7 +313,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // magenta, green
         if (colors == 0 || colors == 1)
         {
-            pixCoord += shift_y_all_x(pixCoord, 1.5, 2.0);
+            pixCoord += shift_y_every_x(pixCoord, 1.5, 2.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
@@ -345,7 +326,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // red, green, blue
         else if (colors == 2 || colors == 3)
         {
-            pixCoord += shift_y_all_x(pixCoord, 1.5, 3.0);
+            pixCoord += shift_y_every_x(pixCoord, 1.5, 3.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
@@ -357,7 +338,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // red, green, blue, black
         else if (colors == 4)
         {
-            pixCoord += shift_y_all_x(pixCoord, 1.5, 4.0);
+            pixCoord += shift_y_every_x(pixCoord, 1.5, 4.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
@@ -374,7 +355,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // magenta, green
         if(colors == 0 || colors == 1)
         {
-            pixCoord += shift_x_all_y(pixCoord, 1.0, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 1.0, 1.0);
 
             color = get_subpixel_color(pixCoord, c1, c2);
         }
@@ -388,7 +369,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
                 // default
                 0.0;
 
-            pixCoord += shift_x_all_y(pixCoord, 1.5 + shift, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 1.5 + shift, 1.0);
             pixCoord.x *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
 
             color = get_subpixel_color(pixCoord, c1, c2, c3);
@@ -396,7 +377,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         // reg, green, blue, black
         else if (colors == 4)
         {
-            pixCoord += shift_x_all_y(pixCoord, 2.0, 1.0);
+            pixCoord += shift_x_every_y(pixCoord, 2.0, 1.0);
 
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
@@ -404,7 +385,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
 
     color *= smooth_round_box(
         fract(pixCoord / bounds),
-        bounds * 1024.0,
+        bounds * 1024.0, // virtually inflate bounds to be able to apply smoothness
         scale,
         radius,
         smoothness);
