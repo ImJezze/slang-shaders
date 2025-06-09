@@ -311,19 +311,19 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
     mask = mix(
         mask,
         mask + color_luma,
-        color_luma * PARAM_MASK_OPACITY);
+        color_luma * PARAM_MASK_BLEND);
 
-    // increase mask brightnes based on intensity
+    // increase mask brightnes based on half intensity
     vec3 mask_clear = mask;
-    mask_clear += 1.0 - PARAM_MASK_INTENSITY;
+    mask_clear += (1.0 - PARAM_MASK_INTENSITY) * 0.5;
     mask_clear = clamp(mask_clear, 0.0, 1.0);
-    mask_clear += PARAM_MASK_INTENSITY;
+    mask_clear += PARAM_MASK_INTENSITY * 0.5;
 
-    // apply mask brightnes for bright pixel based on opacity
+    // apply mask brightnes based on opacity
     mask = mix(
         mask,
         mask_clear,
-        color_luma * PARAM_MASK_OPACITY);
+        PARAM_MASK_BLEND);
 
     // apply mask based on intensity
     color = mix(

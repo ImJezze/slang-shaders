@@ -36,7 +36,7 @@ layout (push_constant) uniform Push
     float BEAM_FILTER;
     float SCANLINES_COLOR_BURN;
     float MASK_INTENSITY;
-    float MASK_OPACITY;
+    float MASK_BLEND;
     float MASK_SIZE;
     float MASK_TYPE;
     float MASK_COLOR_COUNT;

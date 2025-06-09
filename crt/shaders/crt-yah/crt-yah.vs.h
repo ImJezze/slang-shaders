@@ -102,7 +102,7 @@ float get_brightness_compensation()
         // mask compensation
         brightness_compensation += 
            - 0.125 * mask_intensity
-           + 0.875 * (1.0 - PARAM_MASK_OPACITY) * mask_intensity
+           + 0.875 * (1.0 - PARAM_MASK_BLEND) * mask_intensity
            + offset * mask_intensity;
     }
 
