@@ -39,7 +39,7 @@ layout (push_constant) uniform Push
     float MASK_BLEND;
     float MASK_SIZE;
     float MASK_TYPE;
-    float MASK_COLOR_COUNT;
+    float MASK_SUBPIXEL;
     float MASK_COLOR_BLEED;
     float CRT_CURVATURE_AMOUNT;
     float CRT_VIGNETTE_AMOUNT;

@@ -65,79 +65,79 @@ vec3 get_subpixel_color(vec2 pixCoord, vec3 c1, vec3 c2, vec3 c3, vec3 c4)
 // @pixCoord - the pixel coordinate
 //    which is usually the texture coordinate multiplied by the output size.
 // @size - the mask size
-// @type - the mask type [1, 3]
+// @mask_type - the mask type [1, 3]
 //    1: Aperture-grille
 //    2: Slot-mask
 //    3: Shadow-mask
-// @colors - the colors type [0, 4]
-//    0: white, black
-//    1: green, magenta
-//    2: green, magenta, black
-//    3: red, green, blue
-//    4: red, green, blue, black
-// @swap - whether the sub-pixel color shall be swapped
+// @subpixel_type - the subpixel type [1, 5]
+//    1: white, black
+//    2: green, magenta
+//    3: green, magenta, black
+//    4: red, green, blue
+//    5: red, green, blue, black
+// @color_swap - whether the sub-pixel colors shall be swapped
 //    0: red/green/blue, green/magenta
 //    1: blue/green/red, blue/yellow
-vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap)
+vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_type, bool color_swap)
 {
     vec3 color = White;
 
-    if (type == 0)
+    if (mask_type == 0 || subpixel_type == 0)
     {
         return color;
     }
 
     pixCoord /= size;
 
-    vec3 c1 = swap ? Red : Blue;
+    vec3 c1 = color_swap ? Red : Blue;
     vec3 c2 = Green;
-    vec3 c3 = swap ? Blue : Red;
+    vec3 c3 = color_swap ? Blue : Red;
     vec3 c4 = Black;
 
-    if (colors == 0)
+    if (subpixel_type == 1)
     {
         c1 = White;
         c2 = Black;
     }
-    else if (colors == 1)
+    else if (subpixel_type == 2)
     {
-        c1 = swap ? Yellow : Magenta;
-        c2 = swap ? Blue : Green;
+        c1 = color_swap ? Yellow : Magenta;
+        c2 = color_swap ? Blue : Green;
     }
-    else if (colors == 2)
+    else if (subpixel_type == 3)
     {
-        c1 = swap ? Yellow : Magenta;
-        c2 = swap ? Blue : Green;
+        c1 = color_swap ? Yellow : Magenta;
+        c2 = color_swap ? Blue : Green;
         c3 = Black;
     }
 
     // Aperture-grille
-    if (type == 1)
+    if (mask_type == 1)
     {
         // white, black
         // green, magenta
-        if (colors == 0 || colors == 1)
+        if (subpixel_type == 1 || subpixel_type == 2)
         {
             color = get_subpixel_color(pixCoord, c1, c2);
         }
         // green, magenta, black
         // red, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             color = get_subpixel_color(pixCoord, c1, c2, c3);
         }
         // red, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
     }
     // Slot-mask
-    else if (type == 2)
+    else if (mask_type == 2)
     {
         // white, black
         // magenta, green
-        if (colors == 0 || colors == 1)
+        if (subpixel_type == 1 || subpixel_type == 2)
         {
             pixCoord += shift_y_every_x(pixCoord, 2.0, 2.0);
 
@@ -147,7 +147,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         }
         // green, magenta, black
         // red, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             pixCoord += shift_y_every_x(pixCoord, 2.0, 3.0);
 
@@ -156,7 +156,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
                 : get_subpixel_color(pixCoord, c1, c2, c3);
         }
         // red, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             pixCoord += shift_y_every_x(pixCoord, 2.0, 4.0);
 
@@ -166,11 +166,11 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         }
     }
     // Shadow-mask
-    else if (type == 3)
+    else if (mask_type == 3)
     {
         // white, black
         // magenta, green
-        if(colors == 0 || colors == 1)
+        if(subpixel_type == 1 || subpixel_type == 2)
         {
             pixCoord += shift_x_every_y(pixCoord, 1.0, 1.0);
 
@@ -178,7 +178,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         }
         // green, magenta, black
         // reg, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             pixCoord += shift_x_every_y(pixCoord, 1.5, 1.0);
             pixCoord.x *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
@@ -186,7 +186,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
             color = get_subpixel_color(pixCoord, c1, c2, c3);
         }
         // reg, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             pixCoord += shift_x_every_y(pixCoord, 2.0, 1.0);
 
@@ -202,26 +202,26 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
 // @pixCoord - the pixel coordinate
 //    which is usually the texture coordinate multiplied by the output size.
 // @size - the mask size
-// @type - the mask type [1, 3]
+// @mask_type - the mask type [1, 3]
 //    1: Aperture-grille
 //    2: Slot-mask
 //    3: Shadow-mask
-// @colors - the colors type [0, 4]
-//    0: white, black
-//    1: green, magenta
-//    2: green, magenta, black
-//    3: red, green, blue
-//    4: red, green, blue, black
-// @swap - whether the sub-pixel color shall be swapped
+// @subpixel_type - the subpixel type [1, 5]
+//    1: white, black
+//    2: green, magenta
+//    3: green, magenta, black
+//    4: red, green, blue
+//    5: red, green, blue, black
+// @color_swap - whether the sub-pixel colors shall be swapped
 //    0: red/green/blue, green/magenta
 //    1: blue/green/red, blue/yellow
 // @radius - the corner radius of the sub-pixel
 // @smoothness - the smoothness of the sub-pixel
-vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap, float radius, float smoothness)
+vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_type, bool color_swap, float radius, float smoothness)
 {
     vec3 color = White;
 
-    if (type == 0)
+    if (mask_type == 0 || subpixel_type == 0)
     {
         return color;
     }
@@ -231,30 +231,30 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
     vec2 bounds = vec2(1.0, 1.0);
     vec2 scale = vec2(1.0, 1.0);
 
-    vec3 c1 = swap ? Red : Blue;
+    vec3 c1 = color_swap ? Red : Blue;
     vec3 c2 = Green;
-    vec3 c3 = swap ? Blue : Red;
+    vec3 c3 = color_swap ? Blue : Red;
     vec3 c4 = Black;
 
-    if (colors == 0)
+    if (subpixel_type == 1)
     {
         c1 = White;
         c2 = Black;
     }
-    else if (colors == 1)
+    else if (subpixel_type == 2)
     {
-        c1 = swap ? Yellow : Magenta;
-        c2 = swap ? Blue : Green;
+        c1 = color_swap ? Yellow : Magenta;
+        c2 = color_swap ? Blue : Green;
     }
-    else if (colors == 2)
+    else if (subpixel_type == 3)
     {
-        c1 = swap ? Yellow : Magenta;
-        c2 = swap ? Blue : Green;
+        c1 = color_swap ? Yellow : Magenta;
+        c2 = color_swap ? Blue : Green;
         c3 = Black;
     }
 
     // Aperture-grille
-    if (type == 1)
+    if (mask_type == 1)
     {
         float shift =
             // correct shape for size 3
@@ -266,18 +266,18 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
 
         // white, black
         // magenta, green
-        if (colors == 0 || colors == 1)
+        if (subpixel_type == 1 || subpixel_type == 2)
         {
             color = get_subpixel_color(pixCoord, c1, c2);
         }
         // magenta, green, black
         // red, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             color = get_subpixel_color(pixCoord, c1, c2, c3);
         }
         // red, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
@@ -286,7 +286,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         bounds = vec2(1.0, 1080.0 * 8.0);
     }
     // Slot-mask
-    else if (type == 2)
+    else if (mask_type == 2)
     {
         // correct shape for size 1
         float height = size == 1
@@ -311,49 +311,43 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
 
         // white, black
         // magenta, green
-        if (colors == 0 || colors == 1)
+        if (subpixel_type == 1 || subpixel_type == 2)
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 2.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
             color = get_subpixel_color(pixCoord, c1, c2);
-
-            bounds = vec2(1.0, height);
-            scale = vec2(1.0, (height - offset) / height);
         }
         // magenta, green, black
         // red, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 3.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
             color = get_subpixel_color(pixCoord, c1, c2, c3);
-
-            bounds = vec2(1.0, height);
-            scale = vec2(1.0, (height - offset) / height);
         }
         // red, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 4.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
             pixCoord.y += offset / 2.0;
 
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
-
-            bounds = vec2(1.0, height);
-            scale = vec2(1.0, (height - offset) / height);
         }
+
+        bounds = vec2(1.0, height);
+        scale = vec2(1.0, (height - offset) / height);
     }
     // Shadow-mask
-    else if (type == 3)
+    else if (mask_type == 3)
     {
         // white, black
         // magenta, green
-        if(colors == 0 || colors == 1)
+        if(subpixel_type == 1 || subpixel_type == 2)
         {
             pixCoord += shift_x_every_y(pixCoord, 1.0, 1.0);
 
@@ -361,7 +355,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
         }
         // magenta, green, black
         // reg, green, blue
-        else if (colors == 2 || colors == 3)
+        else if (subpixel_type == 3 || subpixel_type == 4)
         {
             float shift =
                 // correct shape for size 3
@@ -375,7 +369,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int type, int colors, bool swap
             color = get_subpixel_color(pixCoord, c1, c2, c3);
         }
         // reg, green, blue, black
-        else if (colors == 4)
+        else if (subpixel_type == 5)
         {
             pixCoord += shift_x_every_y(pixCoord, 2.0, 1.0);
 

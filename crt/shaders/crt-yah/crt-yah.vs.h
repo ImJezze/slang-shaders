@@ -87,15 +87,15 @@ float get_brightness_compensation()
         // mask color count
         offset +=
             // white, black
-            PARAM_MASK_COLOR_COUNT == 0 ? -0.4 :
+            PARAM_MASK_SUBPIXEL == 1 ? -0.4 :
             // green, magenta
-            PARAM_MASK_COLOR_COUNT == 1 ? -0.4 :
+            PARAM_MASK_SUBPIXEL == 2 ? -0.4 :
             // green, magenta, black
-            PARAM_MASK_COLOR_COUNT == 2 ? -0.1 :
+            PARAM_MASK_SUBPIXEL == 3 ? -0.1 :
             // red, green, blue
-            PARAM_MASK_COLOR_COUNT == 3 ? 0.0 :
+            PARAM_MASK_SUBPIXEL == 4 ? 0.0 :
             // red, green, blue, black
-            PARAM_MASK_COLOR_COUNT == 4 ? 0.2 : 0.0;
+            PARAM_MASK_SUBPIXEL == 5 ? 0.2 : 0.0;
 
         float mask_intensity = normalized_sigmoid(PARAM_MASK_INTENSITY, 0.5);
 

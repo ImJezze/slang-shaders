@@ -284,11 +284,11 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
 
     vec2 pix_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
 
-    // change color count 0 to 1 and swap colors from 1-MG to 0-BY (mono)
-    int color_count = PARAM_MASK_COLOR_COUNT < 1.0
-        ? int(PARAM_MASK_COLOR_COUNT + 1)
-        : int(PARAM_MASK_COLOR_COUNT);
-    bool color_swap = PARAM_MASK_COLOR_COUNT < 1.0;
+    // change subpixel type 1 to 2 and swap subpixel colors from 2-MG to 1-BY
+    int subpixel_type = PARAM_MASK_SUBPIXEL < 2.0
+        ? int(PARAM_MASK_SUBPIXEL + 1)
+        : int(PARAM_MASK_SUBPIXEL);
+    bool subpixel_color_swap = PARAM_MASK_SUBPIXEL < 2.0;
 
     float subpixel_mask = PARAM_MASK_TYPE;
     float subpixel_size = INPUT_MASK_PROFILE.x;
@@ -298,8 +298,8 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
         pix_coord,
         int(subpixel_size),
         int(subpixel_mask),
-        color_count,
-        color_swap,
+        subpixel_type,
+        subpixel_color_swap,
         1.0,
         subpixel_smoothness);
     float mask_luma = get_luminance(mask);
