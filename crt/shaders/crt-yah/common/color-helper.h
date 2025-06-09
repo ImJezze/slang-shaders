@@ -4,7 +4,7 @@
 
 #include "colorspace-srgb.h"
 
-#define EPSILON 0.0000001
+#define EPSILON 1e-6
 #define PI 3.1415926
 
 // Returns the maximum value of the given color.

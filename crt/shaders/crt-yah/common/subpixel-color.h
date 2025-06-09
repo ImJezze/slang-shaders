@@ -4,7 +4,7 @@
 
 #include "geometry-helper.h"
 
-#define EPSILON 0.0000001
+#define EPSILON 1e-6
 
 const vec3 White = vec3(1.0, 1.0, 1.0);
 const vec3 Black = vec3(0.0, 0.0, 0.0);
