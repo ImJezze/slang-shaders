@@ -19,7 +19,7 @@ float max_color(vec3 color)
 // @scale - the new scale.
 vec3 apply_scale(vec3 color, float scale)
 {
-    vec3 normalized_color = color / (length(color) + EPSILON);
+    vec3 normalized_color = color / (max_color(color) + EPSILON);
     
     return normalized_color * scale;
 }
@@ -32,7 +32,7 @@ vec3 apply_scale(vec3 color, float scale)
 //   >0.0 - increasing
 vec3 apply_contrast(vec3 color, float contrast)
 {
-    float linear = min(1.0, length(color));
+    float linear = min(1.0, max_color(color));
     
     float nonlinear = linear;
 
@@ -81,7 +81,7 @@ vec3 apply_saturation(vec3 color, float saturation)
 
     return saturation > 1.0
         // increase
-        ? apply_scale(pow(color, vec3(saturation)), length(color))
+        ? apply_scale(pow(color, vec3(saturation)), max_color(color))
         // decrease
         : mix(vec3(luminance), color, saturation);
 }
