@@ -4,16 +4,16 @@
 #pragma parameter GLOBAL_MASTER "·  Global > ¹Master  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.05
 
 // Color parameters
-#pragma parameter COLOR_TEMPERATUE "   Color > Temperature¹  (-D55 / D65 / +D75)" 0.0 -1.0 1.0 0.1
+#pragma parameter COLOR_TEMPERATUE "   Color > Temperature¹  (-Colder .. +Warmer)" 0.0 -1.0 1.0 0.1
 #pragma parameter COLOR_SATURATION "   Color > Saturation¹  (0-Low .. 2-High)" 1.0 0.0 2.0 0.05
-#pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower / +Higher)" 0.5 -1.0 1.0 0.05
-#pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken / +Lighten)" 0.25 -1.0 1.0 0.05
+#pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower .. +Higher)" 0.5 -1.0 1.0 0.05
+#pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken .. +Lighten)" 0.25 -1.0 2.0 0.05
 #pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.25
 #pragma parameter COLOR_COMPENSATION "   Color > ²Brightnes Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
 // Scanline/beam parameters
 #pragma parameter SCANLINES_STRENGTH "·  Scanlines > Strength¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter SCANLINES_OFFSET "   Scanlines > Offset  (-with / +without Jitter)" -0.25 -2.0 2.0 0.25
+#pragma parameter SCANLINES_OFFSET "   Scanlines > Offset  (-with .. +without Jitter)" -0.25 -2.0 2.0 0.25
 #pragma parameter BEAM_WIDTH_MIN "   Scanlines > Beam Min. Width  (less-Shrink .. 1-Full)" 0.25 0.0 1.0 0.05
 #pragma parameter BEAM_WIDTH_MAX "   Scanlines > Beam Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
 #pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape²  (0-Sharp .. 1-Smooth)" 1.0 0.0 1.0 0.25
@@ -22,7 +22,7 @@
 
 // Mask parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.0 0.0 1.0 0.25
+#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.0 0.0 1.0 0.1
 #pragma parameter MASK_TYPE "   Mask > Type²  (1-Aperture, 2-Slot, 3-Shadow)" 1.0 1.0 3.0 1.0
 #pragma parameter MASK_SUBPIXEL "   Mask > Sub-Pixel²  (1-BY, 2-MG, 3-MGK, 4-RGB, 5-RGBK)" 4.0 1.0 5.0 1.0
 #pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
@@ -51,7 +51,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
                 (value - off_value * 0.5) * param.GLOBAL_MASTER,
                 min(value, min_value),
                 max(value, max_value)),
-            (param.GLOBAL_MASTER - 1.0) * 0.75)
+            param.GLOBAL_MASTER - 1.0)
         : mix(
             off_value,
             value,
@@ -60,11 +60,11 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 
 #define PARAM_COLOR_FLOOR max(PARAM_SCANLINES_STRENGTH, PARAM_MASK_INTENSITY) * (1.0 / 256.0)
 #define PARAM_COLOR_COMPENSATION param.COLOR_COMPENSATION
-#define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 1.0)
+#define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 2.0)
 #define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
 #define PARAM_COLOR_CONTRAST mix_master(param.COLOR_CONTRAST, 0.0, -1.0, 1.0)
 #define PARAM_COLOR_SATURATION mix_master(param.COLOR_SATURATION, 1.0, 0.0, 2.0)
-#define PARAM_COLOR_TEMPERATUE mix_master(param.COLOR_TEMPERATUE, 0.0, -1.0, 1.0)
+#define PARAM_COLOR_TEMPERATUE mix_master(param.COLOR_TEMPERATUE * -1.0, 0.0, -1.0, 1.0)
 #define PARAM_MASK_INTENSITY mix_master(param.MASK_INTENSITY, 0.0, 0.0, 1.0)
 #define PARAM_MASK_BLEND param.MASK_BLEND
 #define PARAM_MASK_SIZE param.MASK_SIZE

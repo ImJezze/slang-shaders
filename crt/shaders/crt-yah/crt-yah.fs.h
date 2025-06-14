@@ -176,13 +176,13 @@ vec3 get_half_beam_color(sampler2D source, vec2 tex_coord, vec2 delta_x, vec2 de
     // get color from spline
     vec3 color = mat4x3(x, y, z, w) * beam_filter;
 
-    // change filter range from [-1.0, 1.0] to [0.0, 2.0]
-    float anti_ringing = smoothstep(1.5, 2.0, PARAM_BEAM_FILTER + 1.0);
+    // map filter range [-1.0, 1.0] to anti-ringing factor [0.5, 0.0] 
+    float anti_ringing = 1.0 - smoothstep(1.5, 2.0, PARAM_BEAM_FILTER + 1.0);
 
     // apply anti-ringing (only when filter below 1.0)
     vec3 color_step = step(0.0, abs(x - y) * abs(z - w));
     vec3 color_clamp = clamp(color, min(y, z), max(y, z));
-    color = mix(color, color_clamp, color_step * (1.0 - anti_ringing));
+    color = mix(color, color_clamp, color_step * anti_ringing);
 
     return color;
 }
@@ -215,8 +215,12 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
         // apply half texel offset
         tc += vec2o(-0.5, 0.5) / INPUT_SCREEN_MULTIPLE;
 
-        // apply half texel x-offset to sample between two sub-resolution pixel
-        tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
+        // when whole screen scale
+        if (fract(PARAM_SCREEN_SCALE) == 0.0)
+        {
+            // apply half texel x-offset to sample between two sub-resolution pixel
+            tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
+        }
     }
     // when up-scaled
     else
