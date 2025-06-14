@@ -17,6 +17,11 @@
     #define PIXEL_SIZE_LIMIT 3.0
 #endif
 
+#ifndef OFFSET_PRECISTION
+    // The precistion of the multiple offset.
+    #define OFFSET_PRECISTION 0.25
+#endif
+
 // Returns whether the x-axis is the largest dimension of the given size.
 //   0 - horizontal
 //   1 - vertical
@@ -156,12 +161,13 @@ const float multiple_factors[multiple_count] = float[multiple_count](
     8.0,
     9.0);
 
-float get_multiple_factor(float index, float amount)
+float get_multiple_factor(float index)
 {
+    // interpolate for index with fractional part
     return mix(
         multiple_factors[int(clamp(floor(index), 0.0, multiple_count - 1.0))],
         multiple_factors[int(clamp(ceil(index), 0.0, multiple_count - 1.0))],
-        amount);
+        fract(index));
 }
 
 // Returns the multiple of the size for the defined base size, scaled by the specified offset.
@@ -175,8 +181,7 @@ float get_multiple_factor(float index, float amount)
 //   = 0.0 - the multiple will be rounded to the next integer greater equal to 1.
 //   > 0.0 - in addition the multiple will be incremented by the offset.
 //   < 0.0 - in addition the multiple will be decremented by the offset.
-// @pixel_size_limit: the smallest allowed pixel size, which the multiple may result in.
-float get_multiple(vec2 size, float orientation, float offset, float pixel_size_limit)
+float get_multiple(vec2 size, float orientation, float offset)
 {
     float multiple = get_multiple(size, orientation);
     float multiple_index = max(1.0, round(multiple)) - 1.0;
@@ -187,46 +192,18 @@ float get_multiple(vec2 size, float orientation, float offset, float pixel_size_
     float scale = orientation > 0.0
         ? OUTPUT_SIZE.x / size.x
         : OUTPUT_SIZE.y / size.y;
-    for (multiple_index; multiple_index < multiple_count; multiple_index += 1.0)
+    for (multiple_index; multiple_index < multiple_count; multiple_index += OFFSET_PRECISTION)
     {
-        // apply factional offset
-        multiple = get_multiple_factor(multiple_index, fract(offset));
-
+        multiple = get_multiple_factor(multiple_index);
+        
         // break at a multiple which results in a pixel size larger/equal the given limit
-        if ((scale * multiple) >= pixel_size_limit)
+        if ((scale * multiple) >= PIXEL_SIZE_LIMIT)
         {
             break;
         }
     }
 
     return multiple;
-}
-
-float get_multiple(vec2 size, float orientation, float offset)
-{
-    return get_multiple(size, orientation, offset, 0.0);
-}
-
-// Returns the step-wise multiple of the size for the defined base size, scaled by the specified offset.
-//   Multiple greater than 1.0 will be whole integers.
-//   Multiple smaller than 1.0 will be fraction, the inverse of a whole integer.
-//   The base size can be set by #define BASE_SIZE, which has to be be a float or integer.
-// @size: the size to test
-//   e.g. global.SourceSize
-// @orientation: the orientation
-//   0 - horizontal
-//   1 - vertical
-// @offset: the scaling offset
-//   = 0.0 - the multiple will be rounded to the next integer greater equal to 1.
-//   > 0.0 - in addition the multiple will be incremented by the offset.
-//   < 0.0 - in addition the multiple will be decremented by the offset.
-float get_multiple_stepwise(vec2 size, float orientation, float offset)
-{
-    offset = offset > 0.0
-        ? floor(offset)
-        : ceil(offset);
-
-    return get_multiple(size, orientation, offset, PIXEL_SIZE_LIMIT);
 }
 
 #endif // SCREEN_HELPER

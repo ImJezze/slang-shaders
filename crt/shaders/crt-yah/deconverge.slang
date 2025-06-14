@@ -40,7 +40,7 @@ void main()
     gl_Position = global.MVP * Position;
 
     float screen_orientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
-    float screen_scale = get_multiple_stepwise(global.OriginalSize.xy, screen_orientation, -PARAM_SCREEN_SCALE);
+    float screen_scale = get_multiple(global.OriginalSize.xy, screen_orientation, -PARAM_SCREEN_SCALE);
 
     // limit deconverge to range of [-1.0, 1.0]
     float linear_limit = PARAM_DECONVERGE_LINEAR > 0

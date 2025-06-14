@@ -72,7 +72,7 @@ void main()
     TexCoord = Coord;
 
     ScreenOrientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
-    ScreenMultiple = get_multiple_stepwise(global.OriginalSize.xy, ScreenOrientation, -PARAM_SCREEN_SCALE);
+    ScreenMultiple = get_multiple(global.OriginalSize.xy, ScreenOrientation, -PARAM_SCREEN_SCALE);
     BrightnessCompensation = get_brightness_compensation();
     MaskProfile = get_mask_profile();
     BeamProfile = get_beam_profile();

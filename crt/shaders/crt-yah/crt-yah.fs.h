@@ -215,12 +215,8 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
         // apply half texel offset
         tc += vec2o(-0.5, 0.5) / INPUT_SCREEN_MULTIPLE;
 
-        // when whole screen scale
-        if (fract(PARAM_SCREEN_SCALE) == 0.0)
-        {
-            // apply half texel x-offset to sample between two sub-resolution pixel
-            tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
-        }
+        // apply half texel x-offset to sample between two sub-resolution pixel
+        tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
     }
     // when up-scaled
     else
