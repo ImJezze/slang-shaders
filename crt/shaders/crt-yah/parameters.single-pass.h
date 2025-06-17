@@ -18,6 +18,7 @@
 #pragma parameter BEAM_WIDTH_MAX "   Scanlines > Beam Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
 #pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape²  (0-Sharp .. 1-Smooth)" 1.0 0.0 1.0 0.25
 #pragma parameter BEAM_FILTER "   Scanlines > Beam Filter  (-1-Blocky .. 1-Blurry)" 0.0 -1.0 1.0 0.05
+#pragma parameter ANTI_RINGING "   Scanlines > Anti-Ringing  (0-None .. 1-Full)" 1.0 0.0 1.0 0.1
 #pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Color Burn¹  (0-None .. 1-Full)" 1.0 0.0 1.0 0.25
 
 // Mask parameters
@@ -37,7 +38,7 @@
 
 // Screen parameters
 #pragma parameter SCREEN_ORIENTATION "·  Screen > Orientation  (0-Auto, 1-Horizontal, 2-Vertical)" 0.0 0.0 2.0 1.0
-#pragma parameter SCREEN_SCALE "   Screen > Scale  (-Down / 0-Auto / +Up)" 0.0 -2.0 2.0 1.0
+#pragma parameter SCREEN_SCALE "   Screen > Scale  (-Down / 0-Auto / +Up)" 0.0 -2.0 2.0 0.25
 
 #pragma parameter INFO1 "¹ Reduces marked effects" 0.0 0.0 0.0 0.0
 #pragma parameter INFO2 "² Compensates brightness changes of marked effects" 0.0 0.0 0.0 0.0
@@ -78,6 +79,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 #define PARAM_BEAM_WIDTH_MAX param.BEAM_WIDTH_MAX
 #define PARAM_BEAM_SHAPE param.BEAM_SHAPE
 #define PARAM_BEAM_FILTER mix_master(param.BEAM_FILTER, 0.0, -1.0, 1.0)
+#define PARAM_ANTI_RINGING param.ANTI_RINGING
 #define PARAM_CRT_CURVATURE_AMOUNT mix_master(param.CRT_CURVATURE_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_CRT_VIGNETTE_AMOUNT mix_master(param.CRT_VIGNETTE_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_CRT_NOISE_AMOUNT mix_master(param.CRT_NOISE_AMOUNT, 0.0, 0.0, 1.0)

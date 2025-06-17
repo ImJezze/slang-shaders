@@ -19,6 +19,7 @@
 #pragma parameter BEAM_WIDTH_MAX "   Scanlines > Beam Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
 #pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape²  (0-Sharp .. 1-Smooth)" 1.0 0.0 1.0 0.25
 #pragma parameter BEAM_FILTER "   Scanlines > Beam Filter  (-Blocky .. +Blurry)" 0.0 -1.0 1.0 0.05
+#pragma parameter ANTI_RINGING "   Scanlines > Anti-Ringing  (0-None .. 1-Full)" 1.0 0.0 1.0 0.1
 #pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Color Burn¹  (0-None .. 1-Full)" 1.0 0.0 1.0 0.25
 
 // Mask parameters
@@ -31,7 +32,7 @@
 
 // NTSC parameters
 #pragma parameter NTSC_PROFILE "·  NTSC > Profile  (0-Off, 1-Separate Y/C, 2-Composite, 3-RF)" 0.0 0.0 3.0 1.0
-#pragma parameter NTSC_QUALITY "   NTSC > Quality  (1-Two Phase, 2-Three Phase / 3-Field Merge)" 1.0 1.0 3.0 1.0
+#pragma parameter NTSC_QUALITY "   NTSC > Quality  (1-Two Phase, 2-Three Phase & 3-Field Merge)" 1.0 1.0 3.0 1.0
 
 // Converge parameters
 #pragma parameter DECONVERGE_LINEAR "·  Deconverge > Linear Amount¹  (0-None .. -/+ 1-Full)" 0.75 -2.0 2.0 0.05
@@ -95,6 +96,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 #define PARAM_BEAM_WIDTH_MAX param.BEAM_WIDTH_MAX
 #define PARAM_BEAM_SHAPE param.BEAM_SHAPE
 #define PARAM_BEAM_FILTER mix_master(param.BEAM_FILTER, 0.0, -1.0, 1.0)
+#define PARAM_ANTI_RINGING param.ANTI_RINGING
 #define PARAM_CRT_CURVATURE_AMOUNT mix_master(param.CRT_CURVATURE_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_CRT_VIGNETTE_AMOUNT mix_master(param.CRT_VIGNETTE_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_CRT_NOISE_AMOUNT mix_master(param.CRT_NOISE_AMOUNT, 0.0, 0.0, 1.0)

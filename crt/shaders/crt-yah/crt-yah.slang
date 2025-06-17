@@ -34,6 +34,7 @@ layout (push_constant) uniform Push
     float BEAM_WIDTH_MAX;
     float BEAM_SHAPE;
     float BEAM_FILTER;
+    float ANTI_RINGING;
     float SCANLINES_COLOR_BURN;
     float MASK_INTENSITY;
     float MASK_BLEND;
