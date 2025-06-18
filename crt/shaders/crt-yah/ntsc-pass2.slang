@@ -11,7 +11,7 @@
 //    float_framebuffer1 = false
 //    scale_type_x1 = source
 //    scale_type_y1 = source
-//    scale_x1 = 0.25 // down-scale in both dimension to be independent of the orientation
+//    scale_x1 = 0.25
 //    scale_y1 = 0.25
 
 const float Prescale = 0.25;

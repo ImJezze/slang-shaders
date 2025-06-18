@@ -77,8 +77,8 @@ vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
 {
     vec2 texel = tex_coord * global.SourceSize.xy;
 
-    // Figure out where in the texel to sample to get correct pre-scaled bilinear.
-    float scale = floor(global.OutputSize.y / global.SourceSize.y + 0.01);
+    // figure out where in the texel to sample to get correct pre-scaled bilinear
+    float scale = floor(global.OutputSize.y / global.SourceSize.y + EPSILON);
     float region_range = 0.5 - 0.5 / scale;
     vec2 center_distance = fract(texel) - 0.5;
     vec2 fraction = (center_distance - clamp(center_distance, -region_range, region_range)) * scale + 0.5;

@@ -7,11 +7,11 @@
 */
 
 // Required shader pass settings:
-//    filter_linear0 = false
+//    filter_linear0 = true
 //    float_framebuffer0 = true
 //    scale_type_x0 = source
 //    scale_type_y0 = source
-//    scale_x0 = 4.0 // up-scale in both dimension to be independent of the orientation
+//    scale_x0 = 4.0
 //    scale_y0 = 4.0
 
 const float Prescale = 4.0;
