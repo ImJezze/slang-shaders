@@ -1,7 +1,7 @@
 #version 450
 
 /*
-    Based on LUT shader by Hunter Kaller
+    Based on LUT shader by Hunter K.
     Modified by Jezze
 */
 

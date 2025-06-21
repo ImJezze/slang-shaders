@@ -1,5 +1,5 @@
 /*
-    NTSC-Adaptive pass 1 by Hunter Kaller
+    NTSC-Adaptive pass 1 by Hunter K.
     Based on NTSC shader by The Maister
     Modified by Jezze
 */

@@ -1,7 +1,7 @@
 #version 450
 
 /*
-    Based on Vertical Blur shader by Hunter Kaller
+    Based on Vertical Blur shader by Hunter K.
     Modified by Jezze
 */
 

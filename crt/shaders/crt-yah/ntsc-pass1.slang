@@ -1,7 +1,7 @@
 #version 450
 
 /*
-    NTSC-Adaptive pass 1 by Hunter Kaller
+    NTSC-Adaptive pass 1 by Hunter K.
     Based on NTSC shader by The Maister
     Modified by Jezze
 */
@@ -69,16 +69,20 @@ void main()
     PixCoord.x *= max(screen_scale, 1.0);
     PixCoord.y /= Prescale;
 
+    // Quality:
     // 1-Low - 2 phase
     // 2-Medium - 3 phase
     // 3-High - 3 phase & field merge
     Phase = clamp(PARAM_NTSC_QUALITY + 1.0, 2.0, 3.0);
     Merge = PARAM_NTSC_QUALITY == 3.0 ? 1.0 : 0.0;
 
-    float profile = PARAM_NTSC_PROFILE - 1.0;
-
-	Artifacting = profile * 0.5 * (max(screen_scale, 1.0) + 1.0);
-	Fringing = profile;
+    // Profile:
+    // 0-Off
+    // 1-Separate Y/C
+    // 2-Composite
+    // 3-RF
+    Fringing = PARAM_NTSC_PROFILE - 1.0;
+    Artifacting = (PARAM_NTSC_PROFILE - 1.0) * 0.5 * (max(screen_scale, 1.0) + 1.0);
 }
 
 #pragma stage fragment
@@ -91,10 +95,13 @@ layout(location = 5) in float Merge;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 
-#define MIX mat3(            \
-    1.0, Fringing, Fringing, \
-    Artifacting, 2.0, 0.0,   \
-    Artifacting, 0.0, 2.0)
+const float Brightness = 1.0;
+const float Saturation = 1.0;
+
+#define MIX mat3(                       \
+    Brightness, Fringing, Fringing,     \
+    Artifacting, 2.0 * Saturation, 0.0, \
+    Artifacting, 0.0, 2.0 * Saturation)
 
 #include "ntsc-pass1.h"
 

@@ -1,7 +1,7 @@
 #version 450
 
 /*
-    NTSC-Adaptive pass 2 by Hunter Kaller
+    NTSC-Adaptive pass 2 by Hunter K.
     Based on NTSC shader by The Maister
     Modified by Jezze
 */
@@ -60,6 +60,7 @@ void main()
         ? vec2(global.SourceSize.z / screen_scale, 0.0)
         : vec2(0.0, global.SourceSize.w / screen_scale);
 
+    // Quality:
     // 1-Low - 2 phase
     // 2-Medium - 3 phase
     // 3-High - 3 phase (& field merge, not used here)
