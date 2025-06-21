@@ -73,10 +73,10 @@ float get_brightness_compensation()
 
     if (PARAM_MASK_TYPE > 0.0)
     {
-        float offset = 0.0;
+        float mask_size = INPUT_MASK_PROFILE.x;
 
         // mask type
-        offset +=
+        float type_offset =
             // aperture-grille
             PARAM_MASK_TYPE == 1 ? 0.1 :
             // slot-mask
@@ -84,8 +84,8 @@ float get_brightness_compensation()
             // shadow-mask
             PARAM_MASK_TYPE == 3 ? 0.0 : 0.0;
 
-        // mask color count
-        offset +=
+        // mask sub-pixel
+        float subpixel_offset =
             // white, black
             PARAM_MASK_SUBPIXEL == 1 ? -0.3 :
             // green, magenta
@@ -97,13 +97,24 @@ float get_brightness_compensation()
             // red, green, blue, black
             PARAM_MASK_SUBPIXEL == 5 ? 0.2 : 0.0;
 
+        // mask size
+        float size_offset = 
+            // aperture-grille
+            PARAM_MASK_TYPE == 1 && mask_size > 1.0 ? 1.0 :
+            // slot-mask
+            PARAM_MASK_TYPE == 2 && mask_size > 1.0 ? 1.0 :
+            // shadow-mask
+            PARAM_MASK_TYPE == 3 && mask_size > 2.0 ? 0.5 : 0.0;     
+
         float mask_intensity = normalized_sigmoid(PARAM_MASK_INTENSITY, 0.5);
 
         // mask compensation
-        brightness_compensation += 
+        brightness_compensation +=
            - 0.125 * mask_intensity
            + 0.875 * (1.0 - PARAM_MASK_BLEND) * mask_intensity
-           + offset * mask_intensity;
+           + type_offset * mask_intensity
+           + subpixel_offset * mask_intensity
+           + size_offset * (1.0 - PARAM_MASK_BLEND * 0.5) * mask_intensity;
     }
 
     return brightness_compensation;

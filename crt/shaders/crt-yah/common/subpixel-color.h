@@ -225,7 +225,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
     {
         return color;
     }
-
+    
     pixCoord /= size;
 
     vec2 bounds = vec2(1.0, 1.0);
@@ -257,6 +257,8 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
     if (mask_type == 1)
     {
         float shift =
+            // correct shape for size 2
+            size == 2 ? 1.0 / 4.0 :
             // correct shape for size 3
             size == 3 ? 1.0 / 6.0 :
             // default
@@ -302,6 +304,8 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
             0.25;
 
         vec2 shift =
+            // correct shape for size 2
+            size == 2 ? vec2(1.0 / 4.0, offset / 2.0) :
             // correct shape for size 3
             size == 3 ? vec2(1.0 / 6.0, offset / 2.0) :
             // default
@@ -358,8 +362,10 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         else if (subpixel_type == 3 || subpixel_type == 4)
         {
             float shift =
+//              // correct shape for size 2
+//              size == 2 ? 1.0 / 4.0 :
                 // correct shape for size 3
-                size == 3 ? (1.0 / 6.0) :
+                size == 3 ? 1.0 / 6.0 :
                 // default
                 0.0;
 

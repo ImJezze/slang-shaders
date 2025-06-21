@@ -66,6 +66,7 @@ layout(location = 6) out mat4x4 BeamFilter;
 
 // required by crt-yah.vs.h
 #define INPUT_SCREEN_MULTIPLE ScreenMultiple
+#define INPUT_MASK_PROFILE MaskProfile
 
 #include "crt-yah.vs.h"
 
@@ -76,10 +77,10 @@ void main()
 
     ScreenOrientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
     ScreenMultiple = get_multiple(global.OriginalSize.xy, ScreenOrientation, -PARAM_SCREEN_SCALE);
-    BrightnessCompensation = get_brightness_compensation();
     MaskProfile = get_mask_profile();
     BeamProfile = get_beam_profile();
     BeamFilter = get_beam_filter();
+    BrightnessCompensation = get_brightness_compensation();
 }
 
 #pragma stage fragment
@@ -114,7 +115,7 @@ void main()
     vec2 tex_coord_curved_sharpend = apply_sharp_bilinear_filtering(tex_coord_curved);
 
 #ifdef DEBUG
-    if (tex_coord.x < 0.5)
+    if (tex_coord.x + tex_coord.y < 1.0)
     {
         FragColor = texture(TextureSource, tex_coord_curved_sharpend);
 
