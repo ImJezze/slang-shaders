@@ -66,9 +66,9 @@ float get_brightness_compensation()
         scanlines_strength
         * mix(
             // smarp shape
-            0.25,
+            0.375,
             // smooth shape
-            0.75,
+            0.875,
             PARAM_BEAM_SHAPE);
 
     if (PARAM_MASK_TYPE > 0.0)
@@ -78,20 +78,20 @@ float get_brightness_compensation()
         // mask type
         offset +=
             // aperture-grille
-            PARAM_MASK_TYPE == 1 ? 0.0 :
+            PARAM_MASK_TYPE == 1 ? 0.1 :
             // slot-mask
             PARAM_MASK_TYPE == 2 ? 0.2 :
             // shadow-mask
-            PARAM_MASK_TYPE == 3 ? 0.4 : 0.0;
+            PARAM_MASK_TYPE == 3 ? 0.0 : 0.0;
 
         // mask color count
         offset +=
             // white, black
-            PARAM_MASK_SUBPIXEL == 1 ? -0.4 :
+            PARAM_MASK_SUBPIXEL == 1 ? -0.3 :
             // green, magenta
             PARAM_MASK_SUBPIXEL == 2 ? -0.4 :
             // green, magenta, black
-            PARAM_MASK_SUBPIXEL == 3 ? -0.1 :
+            PARAM_MASK_SUBPIXEL == 3 ? 0.0 :
             // red, green, blue
             PARAM_MASK_SUBPIXEL == 4 ? 0.0 :
             // red, green, blue, black
