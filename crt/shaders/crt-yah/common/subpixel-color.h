@@ -253,14 +253,17 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         c3 = Black;
     }
 
+    const float o4 = 1.0 / 4.0;
+    const float o6 = 1.0 / 6.0;
+
     // Aperture-grille
     if (mask_type == 1)
     {
         float shift =
             // correct shape for size 2
-            size == 2 ? 1.0 / 4.0 :
+            size == 2 ? o4 :
             // correct shape for size 3
-            size == 3 ? 1.0 / 6.0 :
+            size == 3 ? o6 :
             // default
             0.0;
 
@@ -297,17 +300,17 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
 
         float offset =
             // correct shape for size 1
-            size == 1 ? 1.0 :
+            size == 1 ? 0.5 :
             // correct shape for size 2
-            size == 2 ? 0.5 :
+            size == 2 ? 0.25 :
             // default
-            0.25;
+            0.125;
 
         vec2 shift =
             // correct shape for size 2
-            size == 2 ? vec2(1.0 / 4.0, offset / 2.0) :
+            size == 2 ? vec2(o4, offset) :
             // correct shape for size 3
-            size == 3 ? vec2(1.0 / 6.0, offset / 2.0) :
+            size == 3 ? vec2(o6, offset) :
             // default
             vec2(0.0);
 
@@ -319,7 +322,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 2.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
-            pixCoord.y += offset / 2.0;
+            pixCoord.y += offset;
 
             color = get_subpixel_color(pixCoord, c1, c2);
         }
@@ -329,7 +332,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 3.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
-            pixCoord.y += offset / 2.0;
+            pixCoord.y += offset;
 
             color = get_subpixel_color(pixCoord, c1, c2, c3);
         }
@@ -338,13 +341,13 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         {
             pixCoord += shift_y_every_x(pixCoord, 1.5, 4.0);
             pixCoord.y *= 1.0 + EPSILON; // avoid color artifacts due to half pixel shift
-            pixCoord.y += offset / 2.0;
+            pixCoord.y += offset;
 
             color = get_subpixel_color(pixCoord, c1, c2, c3, c4);
         }
 
         bounds = vec2(1.0, height);
-        scale = vec2(1.0, (height - offset) / height);
+        scale = vec2(1.0, (height - offset * 2.0) / height);
     }
     // Shadow-mask
     else if (mask_type == 3)
@@ -363,9 +366,9 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         {
             float shift =
 //              // correct shape for size 2
-//              size == 2 ? 1.0 / 4.0 :
+//              size == 2 ? o4 :
                 // correct shape for size 3
-                size == 3 ? 1.0 / 6.0 :
+                size == 3 ? o6 :
                 // default
                 0.0;
 
