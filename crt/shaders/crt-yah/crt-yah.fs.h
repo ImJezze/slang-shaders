@@ -200,8 +200,10 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
 {
     vec2 tex_size = global.OriginalSize.xy;
 
-    // apply (fake) scale
-    tex_size /= INPUT_SCREEN_MULTIPLE;
+    vec2 multiple = vec2o(1.0, INPUT_SCREEN_MULTIPLE);
+
+    // apply (fake) scale y-axis
+    tex_size /= multiple;
 
     vec2 pc = tex_coord;
 
@@ -213,20 +215,14 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
 
     vec2 tc = floor(pc);
 
-    // when down-scaled
-    if (INPUT_SCREEN_MULTIPLE > 1.0)
-    {
-        // apply half texel offset
-        tc += vec2o(-0.5, 0.5) / INPUT_SCREEN_MULTIPLE;
+    // apply half texel offset
+    tc += vec2o(-0.5, 0.5) / multiple;
 
-        // apply half texel x-offset to sample between two sub-resolution pixel
-        tc += vec2o(-0.5, 0.0) / INPUT_SCREEN_MULTIPLE;
-    }
-    // when up-scaled
-    else
+    // if automatic down-scaled
+    if (INPUT_SCREEN_MULTIPLE_AUTO > 1)
     {
-        // apply half texel offset
-        tc += vec2o(-0.5, 0.5);
+        // apply half texel x-offset to sample between two sub-resolution pixel
+        tc += vec2o(-0.5, 0.0) / multiple;
     }
 
     float scanlines_offset = PARAM_SCANLINES_OFFSET > 0.0

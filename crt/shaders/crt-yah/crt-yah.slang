@@ -59,10 +59,11 @@ layout(location = 1) in vec2 Coord;
 layout(location = 0) out vec2 TexCoord;
 layout(location = 1) out float ScreenOrientation;
 layout(location = 2) out float ScreenMultiple;
-layout(location = 3) out float BrightnessCompensation;
-layout(location = 4) out vec2 MaskProfile;
-layout(location = 5) out vec4 BeamProfile;
-layout(location = 6) out mat4x4 BeamFilter;
+layout(location = 3) out float ScreenMultipleAuto;
+layout(location = 4) out float BrightnessCompensation;
+layout(location = 5) out vec2 MaskProfile;
+layout(location = 6) out vec4 BeamProfile;
+layout(location = 7) out mat4x4 BeamFilter;
 
 // required by crt-yah.vs.h
 #define INPUT_SCREEN_MULTIPLE ScreenMultiple
@@ -77,6 +78,7 @@ void main()
 
     ScreenOrientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
     ScreenMultiple = get_multiple(global.OriginalSize.xy, ScreenOrientation, -PARAM_SCREEN_SCALE);
+    ScreenMultipleAuto = get_multiple(global.OriginalSize.xy, ScreenOrientation, 0);
     MaskProfile = get_mask_profile();
     BeamProfile = get_beam_profile();
     BeamFilter = get_beam_filter();
@@ -87,10 +89,11 @@ void main()
 layout(location = 0) in vec2 TexCoord;
 layout(location = 1) in float ScreenOrientation;
 layout(location = 2) in float ScreenMultiple;
-layout(location = 3) in float BrightnessCompensation;
-layout(location = 4) in vec2 MaskProfile;
-layout(location = 5) in vec4 BeamProfile;
-layout(location = 6) in mat4x4 BeamFilter;
+layout(location = 3) in float ScreenMultipleAuto;
+layout(location = 4) in float BrightnessCompensation;
+layout(location = 5) in vec2 MaskProfile;
+layout(location = 6) in vec4 BeamProfile;
+layout(location = 7) in mat4x4 BeamFilter;
 layout(location = 0) out vec4 FragColor;
 layout(set = 0, binding = 2) uniform sampler2D Source;
 layout(set = 0, binding = 3) uniform sampler2D LutPass;
@@ -101,6 +104,7 @@ layout(set = 0, binding = 3) uniform sampler2D LutPass;
 // required by crt-yah.fs.h
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
 #define INPUT_SCREEN_MULTIPLE ScreenMultiple
+#define INPUT_SCREEN_MULTIPLE_AUTO ScreenMultipleAuto
 #define INPUT_BRIGHTNESS_COMPENSATION BrightnessCompensation
 #define INPUT_MASK_PROFILE MaskProfile
 #define INPUT_BEAM_PROFILE BeamProfile
