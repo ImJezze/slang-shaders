@@ -103,13 +103,26 @@ const float Saturation = 1.0;
     Artifacting, 2.0 * Saturation, 0.0, \
     Artifacting, 0.0, 2.0 * Saturation)
 
+#include "common/utilities.h"
+
+vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
+{
+    return sharp_bilinear(tex_coord, global.SourceSize.xy, global.OutputSize.xy);
+}
+
 #include "ntsc-pass1.h"
 
 void main()
 {
-    if (PARAM_NTSC_PROFILE == 0.0)
+    if (DEBUG && TexCoord.x < 0.5
+        || PARAM_NTSC_PROFILE == 0.0)
     {
-        FragColor = texture(Source, TexCoord);
+        // the texture is bi-linear pre-scaled
+        // if the pass is not applied the image will appear blurry
+        // therefore apply a sharp bi-linear filtering
+        vec2 tex_coord_sharpend = apply_sharp_bilinear_filtering(TexCoord);
+
+        FragColor = texture(Source, tex_coord_sharpend);
 
         return;
     }

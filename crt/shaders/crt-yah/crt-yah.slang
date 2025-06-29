@@ -118,14 +118,12 @@ void main()
     vec2 tex_coord_curved = apply_cubic_lens_distortion(tex_coord);
     vec2 tex_coord_curved_sharpend = apply_sharp_bilinear_filtering(tex_coord_curved);
 
-#ifdef DEBUG
-    if (tex_coord.x + tex_coord.y < 1.0)
+    if (DEBUG && TexCoord.x < 0.5)
     {
         FragColor = texture(TextureSource, tex_coord_curved_sharpend);
 
         return;
     }
-#endif
 
     vec3 raw_color = get_raw_color(TextureSource, tex_coord_curved_sharpend);
     vec3 scanlines_color = get_scanlines_color(TextureSource, tex_coord_curved);

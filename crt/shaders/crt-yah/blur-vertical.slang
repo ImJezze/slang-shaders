@@ -72,7 +72,8 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 
 void main()
 {
-    if (PARAM_HALATION_INTENSITY == 0.0)
+    if (DEBUG && TexCoord.x < 0.5
+        || PARAM_HALATION_INTENSITY == 0.0)
     {
         FragColor = texture(Source, TexCoord);
 

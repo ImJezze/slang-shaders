@@ -60,6 +60,14 @@ vec3 apply_lut(vec3 color, sampler2D lut_sampler)
 
 void main()
 {
+    if (DEBUG && TexCoord.x < 0.5
+        || PARAM_COLOR_PROFILE == 0.0)
+    {
+        FragColor = texture(Source, TexCoord);
+
+        return;
+    }
+
     vec3 color = INPUT(texture(Source, TexCoord).rgb);
 
     vec3 ntsc_color = apply_lut(color, SamplerLutNtsc);

@@ -52,6 +52,14 @@ layout(set = 0, binding = 3) uniform sampler2D PhosphorPassFeedback;
 
 void main()
 {
+    if (DEBUG && TexCoord.x < 0.5
+        || PARAM_PHOSPHOR_AMOUNT == 0.0)
+    {
+        FragColor = texture(Source, TexCoord);
+
+        return;
+    }
+
     vec3 current = INPUT(texture(Source, TexCoord).rgb);
     vec3 feedback = INPUT(texture(PhosphorPassFeedback, TexCoord).rgb);
 

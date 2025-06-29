@@ -71,21 +71,9 @@ vec2 vec2oy(vec2 v, float f)
         : vec2(v.x, f);
 }
 
-// Based on the sharp-bilinear shader by The Maister.
-// Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
 vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
 {
-    vec2 texel = tex_coord * global.SourceSize.xy;
-
-    // figure out where in the texel to sample to get correct pre-scaled bilinear
-    float scale = floor(global.OutputSize.y / global.SourceSize.y + EPSILON);
-    float region_range = 0.5 - 0.5 / scale;
-    vec2 center_distance = fract(texel) - 0.5;
-    vec2 fraction = (center_distance - clamp(center_distance, -region_range, region_range)) * scale + 0.5;
-
-    vec2 sharp_texel = floor(texel) + fraction;
-
-    return sharp_texel / global.SourceSize.xy;
+    return sharp_bilinear(tex_coord, global.SourceSize.xy, global.OutputSize.xy);
 }
 
 vec2 apply_cubic_lens_distortion(vec2 tex_coord)

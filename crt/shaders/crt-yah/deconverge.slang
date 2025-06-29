@@ -103,16 +103,15 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 
 void main()
 {
-    vec3 color = INPUT(texture(Source, TexCoord).rgb);
-
-#ifdef DEBUG
-    if (TexCoord.x < 0.5)
+    if (DEBUG && TexCoord.x < 0.5
+        || PARAM_DECONVERGE_LINEAR == 0.0 && PARAM_DECONVERGE_RADIAL == 0.0)
     {
-        FragColor = vec4(encode_gamma(color), 1.0);
+        FragColor = texture(Source, TexCoord);
 
         return;
     }
-#endif
+
+    vec3 color = INPUT(texture(Source, TexCoord).rgb);
 
     vec3 deconverge_color = vec3(
         INPUT(texture(Source, TexCoordR).rgb).r,
