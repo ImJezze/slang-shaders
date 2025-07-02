@@ -23,6 +23,7 @@
 */
 
 #include "common/color-helper.h"
+#include "common/frame-helper.h"
 #include "common/subpixel-color.h"
 #include "common/utilities.h"
 
@@ -216,8 +217,8 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
     float scanlines_offset = PARAM_SCANLINES_OFFSET > 0.0
         // fixed offset
         ? PARAM_SCANLINES_OFFSET
-        // jitter offset
-        : mod(global.FrameCount, 2.0) > 0.0
+        // jitter offset each 2nd frame with 30fps
+        : mod(GetUniformFrameCount(30), 2) > 0.0
             ? 0.0
             : abs(PARAM_SCANLINES_OFFSET);
 
@@ -353,8 +354,8 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
     // scale noise based on mask's sub-pixel size
     pix_coord = floor(pix_coord / int(subpixel_size)) * int(subpixel_size);
 
-    // repeat every 20 frames with 12fps (60fps * 0.2)
-    float frame = mod(floor(global.FrameCount * 0.2), 20);
+    // repeat every 20 frames with 12fps
+    float frame = GetUniformFrameModulo(12, 20);
     float noise = random(pix_coord * (frame + 1.0));
 
     float mul_noise = noise * 2.0;

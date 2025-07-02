@@ -26,6 +26,7 @@ layout(std140, set = 0, binding = 0) uniform UBO
     vec4 OutputSize;
     vec4 FinalViewportSize;
     uint FrameCount;
+    uint FrameTimeDelta;
 } global;
 
 layout (push_constant) uniform Push
@@ -103,6 +104,7 @@ const float Saturation = 1.0;
     Artifacting, 2.0 * Saturation, 0.0, \
     Artifacting, 0.0, 2.0 * Saturation)
 
+#include "common/frame-helper.h"
 #include "common/utilities.h"
 
 vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
@@ -127,7 +129,7 @@ void main()
         return;
     }
 
-    vec3 yiq = pass1(Source, TexCoord, PixCoord, int(Phase), bool(Merge), MIX, global.FrameCount);
+    vec3 yiq = pass1(Source, TexCoord, PixCoord, int(Phase), bool(Merge), MIX, GetUniformFrameCount(30));
 
     FragColor = vec4(yiq, 1.0);
 }

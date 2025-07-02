@@ -25,7 +25,6 @@ layout(std140, set = 0, binding = 0) uniform UBO
     vec4 SourceSize;
     vec4 OutputSize;
     vec4 FinalViewportSize;
-    uint FrameCount;
 } global;
 
 layout (push_constant) uniform Push

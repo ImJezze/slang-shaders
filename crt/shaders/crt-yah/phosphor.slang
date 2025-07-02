@@ -17,6 +17,7 @@ layout(std140, set = 0, binding = 0) uniform UBO
     vec4 OutputSize;
     vec4 FinalViewportSize;
     uint FrameCount;
+    uint FrameTimeDelta;
 } global;
 
 layout (push_constant) uniform Push
@@ -49,6 +50,7 @@ layout(set = 0, binding = 3) uniform sampler2D PhosphorPassFeedback;
 #define OUTPUT(color) encode_gamma(color)
 
 #include "common/colorspace-srgb.h"
+#include "common/frame-helper.h"
 
 void main()
 {
@@ -69,6 +71,7 @@ void main()
 
     float amount = 1.0 / (PARAM_PHOSPHOR_AMOUNT * 0.5);
     float decay = PARAM_PHOSPHOR_DECAY + 1.0;
+    decay *= GetUniformFrameFactor();
 
     r = r > 0.0 ? pow(amount + pow(1.0 / r, 1.0 / decay), -decay) : r;
     g = g > 0.0 ? pow(amount + pow(1.0 / g, 1.0 / decay), -decay) : g;
