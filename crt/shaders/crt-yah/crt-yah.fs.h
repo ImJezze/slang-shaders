@@ -24,8 +24,9 @@
 
 #include "common/color-helper.h"
 #include "common/frame-helper.h"
+#include "common/interpolation-helper.h"
+#include "common/math-helper.h"
 #include "common/subpixel-color.h"
-#include "common/utilities.h"
 
 #define INPUT(color)         \
     apply_floor(             \

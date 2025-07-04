@@ -105,7 +105,7 @@ const float Saturation = 1.0;
     Artifacting, 0.0, 2.0 * Saturation)
 
 #include "common/frame-helper.h"
-#include "common/utilities.h"
+#include "common/interpolation-helper.h"
 
 vec2 apply_sharp_bilinear_filtering(vec2 tex_coord)
 {

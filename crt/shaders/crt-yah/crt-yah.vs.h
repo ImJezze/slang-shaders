@@ -22,8 +22,8 @@
     THE SOFTWARE.
 */
 
+#include "common/math-helper.h"
 #include "common/screen-helper.h"
-#include "common/utilities.h"
 
 vec2 get_mask_profile()
 {
