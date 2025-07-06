@@ -13,7 +13,7 @@
 #pragma parameter COLOR_SATURATION "   Color > Saturation¹  (0-Low .. 2-High)" 1.0 0.0 2.0 0.05
 #pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower .. +Higher)" 0.5 -1.0 1.0 0.05
 #pragma parameter COLOR_BRIGHTNESS "   Color > Brightnes¹  (-Darken .. +Lighten)" 0.25 -1.0 2.0 0.05
-#pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.25
+#pragma parameter COLOR_OVERFLOW "   Color > Brightnes Overflow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
 #pragma parameter COLOR_COMPENSATION "   Color > ²Brightnes Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
 // Scanline/beam parameters
@@ -28,23 +28,23 @@
 
 // Mask parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.0 0.0 1.0 0.1
+#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.5 0.0 1.0 0.25
 #pragma parameter MASK_TYPE "   Mask > Type²  (1-Aperture, 2-Slot, 3-Shadow)" 1.0 1.0 3.0 1.0
 #pragma parameter MASK_SUBPIXEL "   Mask > Sub-Pixel²  (1-BY, 2-MG, 3-MGK, 4-RGB, 5-RGBK)" 4.0 1.0 5.0 1.0
-#pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
+#pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.25
 #pragma parameter MASK_SIZE "   Mask > Size  (-Down / 0-Auto / +Up)" 0.0 -2.0 2.0 1.0
 
 // Converge parameters
-#pragma parameter DECONVERGE_LINEAR "·  Deconverge > Linear Amount¹  (0-None .. -/+ 1-Full)" 0.75 -2.0 2.0 0.05
-#pragma parameter DECONVERGE_RADIAL "   Deconverge > Radial Amount¹  (0-None .. -/+ 1-Full)" -0.25 -2.0 2.0 0.05
+#pragma parameter DECONVERGE_LINEAR "·  Deconverge > Linear Amount¹  (0-None .. -/+ 1-Full)" 0.5 -2.0 2.0 0.05
+#pragma parameter DECONVERGE_RADIAL "   Deconverge > Radial Amount¹  (0-None .. -/+ 1-Full)" 0.0 -2.0 2.0 0.05
 
 // Phosphor parameters
-#pragma parameter PHOSPHOR_AMOUNT "·  Phosphor > Amount¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
-#pragma parameter PHOSPHOR_DECAY "   Phosphor > Decay  (0-Slow .. 1-Fast)" 0.75 0.0 1.0 0.05
+#pragma parameter PHOSPHOR_AMOUNT "·  Phosphor > Amount¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
+#pragma parameter PHOSPHOR_DECAY "   Phosphor > Decay  (0-Slow .. 1-Fast)" 0.5 0.0 1.0 0.05
 
 // Halation parameters
-#pragma parameter HALATION_INTENSITY "·  Halation > Intensity¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
-#pragma parameter HALATION_DIFFUSION "   Halation > Diffusion  (0-Low .. 1-High)" 0.75 0.0 1.0 0.05
+#pragma parameter HALATION_INTENSITY "·  Halation > Intensity¹  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
+#pragma parameter HALATION_DIFFUSION "   Halation > Diffusion  (0-Low .. 1-High)" 0.5 0.0 1.0 0.05
 
 // NTSC parameters
 #pragma parameter NTSC_PROFILE "·  NTSC > Profile  (0-Off, 1-Separate Y/C, 2-Composite, 3-RF)" 0.0 0.0 3.0 1.0

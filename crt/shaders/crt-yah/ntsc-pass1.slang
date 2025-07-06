@@ -129,7 +129,10 @@ void main()
         return;
     }
 
-    vec3 yiq = pass1(Source, TexCoord, PixCoord, int(Phase), bool(Merge), MIX, GetUniformFrameCount(30));
+    // used for chroma phase offset with 60fps
+    uint frame_count = GetUniformFrameCount(60);
+
+    vec3 yiq = pass1(Source, TexCoord, PixCoord, int(Phase), bool(Merge), MIX, frame_count);
 
     FragColor = vec4(yiq, 1.0);
 }

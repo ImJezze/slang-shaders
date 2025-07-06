@@ -49,7 +49,7 @@ vec2 get_mask_profile()
         PARAM_MASK_TYPE == 1 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
         // slot-mask for size > 1
         PARAM_MASK_TYPE == 2 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
-        // shadow-mask for size > 2
+        // shadow-mask for size > 2 (smooting starts with size 3, instead of 2)
         PARAM_MASK_TYPE == 3 ? clamp((subpixel_size - 2.0) * 0.25, 0.0, 1.0) : 0.0;
 
     return vec2(subpixel_size, subpixel_smoothness);
@@ -78,15 +78,15 @@ float get_brightness_compensation()
         // mask sub-pixel
         float subpixel_offset =
             // white, black
-            PARAM_MASK_SUBPIXEL == 1 ? -0.4 :
+            PARAM_MASK_SUBPIXEL == 1 ? -0.6 :
             // green, magenta
-            PARAM_MASK_SUBPIXEL == 2 ? -0.5 :
+            PARAM_MASK_SUBPIXEL == 2 ? -0.8 :
             // green, magenta, black
             PARAM_MASK_SUBPIXEL == 3 ? 0.0 :
             // red, green, blue
             PARAM_MASK_SUBPIXEL == 4 ? 0.0 :
             // red, green, blue, black
-            PARAM_MASK_SUBPIXEL == 5 ? 0.3 : 0.0;
+            PARAM_MASK_SUBPIXEL == 5 ? 0.4 : 0.0;
 
         // mask type
         float type_offset =
@@ -114,7 +114,7 @@ float get_brightness_compensation()
         brightness_compensation +=
            - 0.125 * mask_intensity
            + 0.875 * (1.0 - PARAM_MASK_BLEND) * mask_intensity
-           + subpixel_offset * mask_intensity
+           + subpixel_offset * (1.0 - PARAM_MASK_BLEND * 0.5) * mask_intensity
            + type_offset * (1.0 - PARAM_MASK_BLEND * 0.75) * mask_intensity
            + size_offset * (1.0 - PARAM_MASK_BLEND) * mask_intensity;
     }

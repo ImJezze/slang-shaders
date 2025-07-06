@@ -218,8 +218,8 @@ vec3 get_scanlines_color(sampler2D source, vec2 tex_coord)
     float scanlines_offset = PARAM_SCANLINES_OFFSET > 0.0
         // fixed offset
         ? PARAM_SCANLINES_OFFSET
-        // jitter offset each 2nd frame with 30fps
-        : mod(GetUniformFrameCount(30), 2) > 0.0
+        // jitter offset each 2nd frame with 60fps
+        : mod(GetUniformFrameCount(60), 2) > 0.0
             ? 0.0
             : abs(PARAM_SCANLINES_OFFSET);
 
