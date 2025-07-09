@@ -96,11 +96,11 @@ layout(location = 5) in vec2 MaskProfile;
 layout(location = 6) in vec4 BeamProfile;
 layout(location = 7) in mat4x4 BeamFilter;
 layout(location = 0) out vec4 FragColor;
-layout(set = 0, binding = 2) uniform sampler2D Source;
-layout(set = 0, binding = 3) uniform sampler2D LutPass;
+layout(set = 0, binding = 2) uniform sampler2D LutPass;
+layout(set = 0, binding = 3) uniform sampler2D BlurVPass;
 
 #define TextureSource LutPass
-#define HalationSource Source
+#define HalationSource BlurVPass
 
 // required by crt-yah.fs.h
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
@@ -135,7 +135,7 @@ void main()
     color = apply_noise(color, color_luma, tex_coord); // use un-curved coordinates to avoid Moire-artefacts
     color = apply_mask(color, color_luma, tex_coord);  // use un-curved coordinates to avoid Moire-artefacts
     color = apply_color_overflow(color);
-    color = apply_halation(color, HalationSource, tex_coord_curved); // apply after mask & color overflow
+    color = apply_halation(color, HalationSource, tex_coord_curved);
     color = apply_brightness_compensation(color, color_luma);
 
     color *= get_vignette_factor(tex_coord_curved);

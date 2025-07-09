@@ -297,22 +297,22 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord)
     // apply color bleed to neighbor sub-pixel
     mask += mask_luma * PARAM_MASK_COLOR_BLEED;
 
-    // apply color luma for bright pixel based on opacity
+    // apply half color luma for additive mask
     mask = mix(
         mask,
-        mask + color_luma,
-        color_luma * PARAM_MASK_BLEND);
+        mask + color_luma * 0.5,
+        PARAM_MASK_BLEND);
 
     // increase mask brightnes based on half intensity
-    vec3 mask_clear = mask;
-    mask_clear += (1.0 - PARAM_MASK_INTENSITY) * 0.5;
-    mask_clear = clamp(mask_clear, 0.0, 1.0);
-    mask_clear += PARAM_MASK_INTENSITY * 0.5;
+    vec3 mask_add = mask;
+    mask_add += (1.0 - PARAM_MASK_INTENSITY) * 0.5;
+    mask_add = clamp(mask_add, 0.0, 1.0);
+    mask_add += PARAM_MASK_INTENSITY * 0.5;
 
-    // apply mask brightnes based on opacity
+    // blend multiplicative and additive mask
     mask = mix(
         mask,
-        mask_clear,
+        mask_add,
         PARAM_MASK_BLEND);
 
     // apply mask based on intensity
@@ -338,12 +338,12 @@ vec3 apply_color_overflow(vec3 color)
     return color;
 }
 
-vec3 apply_halation(vec3 color, sampler2D source, vec2 tex_coord)
+vec3 apply_halation(vec3 color, sampler2D halation_source, vec2 tex_coord)
 {
-    vec3 halation = INPUT(texture(source, tex_coord).rgb);
+    vec3 halation = INPUT(texture(halation_source, tex_coord).rgb);
 
     // add the difference between color and halation
-    return color + abs(halation - color) * PARAM_HALATION_INTENSITY * 0.25;
+    return color + (halation - color) * (PARAM_HALATION_INTENSITY * 0.25);
 }
 
 vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
