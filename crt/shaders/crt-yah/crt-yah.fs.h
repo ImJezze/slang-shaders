@@ -28,21 +28,36 @@
 #include "common/math-helper.h"
 #include "common/subpixel-color.h"
 
-#define INPUT(color)         \
-    apply_floor(             \
-        decode_gamma(color), \
-        PARAM_COLOR_FLOOR)
-#define OUTPUT(color)                          \
-    encode_gamma(                              \
-        apply_temperature(                     \
-            apply_saturation(                  \
-                apply_brightness(              \
-                    apply_contrast(            \
-                        color,                 \
-                        PARAM_COLOR_CONTRAST), \
-                    PARAM_COLOR_BRIGHTNESS),   \
-                PARAM_COLOR_SATURATION),       \
-            PARAM_COLOR_TEMPERATUE))
+float get_brightness_compensation(float color_luma)
+{
+    float mask_blend = 1.0 - (1.0 - PARAM_MASK_BLEND) * (1.0 - PARAM_MASK_BLEND);
+    
+    return PARAM_COLOR_COMPENSATION > 0.0
+        ? mix(
+            INPUT_BRIGHTNESS_COMPENSATION,
+            INPUT_BRIGHTNESS_COMPENSATION * (1.0 - color_luma),
+            mask_blend)
+        : 0.0;
+}
+
+vec3 INPUT(vec3 color)
+{
+    color = decode_gamma(color);
+    color = apply_floor(color, PARAM_COLOR_FLOOR);
+
+    return color;
+}
+
+vec3 OUTPUT(vec3 color, float color_luma)
+{
+    color = apply_contrast(color, PARAM_COLOR_CONTRAST);
+    color = apply_brightness(color, PARAM_COLOR_BRIGHTNESS + get_brightness_compensation(color_luma));
+    color = apply_saturation(color, PARAM_COLOR_SATURATION);
+    color = apply_temperature(color, PARAM_COLOR_TEMPERATUE);
+    color = encode_gamma(color);
+
+    return color;
+}
 
 // orientation-aware vec2 constructors
 vec2 vec2o(vec2 v)
@@ -366,14 +381,4 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
         color,
         color * mul_noise + add_noise,
         (1.0 - color_luma) * PARAM_CRT_NOISE_AMOUNT * 0.25);
-}
-
-vec3 apply_brightness_compensation(vec3 color, float color_luma)
-{
-    if (PARAM_COLOR_COMPENSATION > 0.0)
-    {
-        color = apply_brightness(color, INPUT_BRIGHTNESS_COMPENSATION * (1.0 - color_luma));
-    }
-
-    return color;
 }

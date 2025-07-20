@@ -28,7 +28,7 @@
 
 // Mask parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.5 0.0 1.0 0.25
+#pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.5 0.0 1.0 0.05
 #pragma parameter MASK_TYPE "   Mask > Type²  (1-Aperture, 2-Slot, 3-Shadow)" 1.0 1.0 3.0 1.0
 #pragma parameter MASK_SUBPIXEL "   Mask > Sub-Pixel²  (1-BY, 2-MG, 3-MGK, 4-RGB, 5-RGBK)" 4.0 1.0 5.0 1.0
 #pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.25

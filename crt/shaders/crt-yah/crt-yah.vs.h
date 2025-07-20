@@ -45,11 +45,11 @@ vec2 get_mask_profile()
     subpixel_size = floor(max(1.0, subpixel_size));
     
     float subpixel_smoothness =
-        // aperture-grille for size > 1
-        PARAM_MASK_TYPE == 1 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
-        // slot-mask for size > 1
-        PARAM_MASK_TYPE == 2 ? clamp((subpixel_size - 1.0) * 0.5, 0.0, 1.0) :
-        // shadow-mask for size > 2 (smooting starts with size 3, instead of 2)
+        // aperture-grille for size > 2
+        PARAM_MASK_TYPE == 1 ? clamp((subpixel_size - 2.0) * 0.75, 0.0, 1.0) :
+        // slot-mask for size > 2
+        PARAM_MASK_TYPE == 2 ? clamp((subpixel_size - 2.0) * 0.75, 0.0, 1.0) :
+        // shadow-mask for size > 2
         PARAM_MASK_TYPE == 3 ? clamp((subpixel_size - 2.0) * 0.25, 0.0, 1.0) : 0.0;
 
     return vec2(subpixel_size, subpixel_smoothness);
@@ -71,53 +71,48 @@ float get_brightness_compensation()
             0.875,
             PARAM_BEAM_SHAPE);
 
-    if (PARAM_MASK_TYPE > 0.0)
-    {
-        float mask_size = INPUT_MASK_PROFILE.x;
+    float mask_intensity = normalized_sigmoid(PARAM_MASK_INTENSITY * PARAM_MASK_INTENSITY, 0.5);
+    float mask_blend = 1.0 - (1.0 - PARAM_MASK_BLEND) * (1.0 - PARAM_MASK_BLEND);
 
-        // mask sub-pixel
-        float subpixel_offset =
-            // white, black
-            PARAM_MASK_SUBPIXEL == 1 ? -0.6 :
-            // green, magenta
-            PARAM_MASK_SUBPIXEL == 2 ? -0.8 :
-            // green, magenta, black
-            PARAM_MASK_SUBPIXEL == 3 ? 0.0 :
-            // red, green, blue
-            PARAM_MASK_SUBPIXEL == 4 ? 0.0 :
-            // red, green, blue, black
-            PARAM_MASK_SUBPIXEL == 5 ? 0.4 : 0.0;
+    float mask_size = INPUT_MASK_PROFILE.x;
 
-        // mask type
-        float type_offset =
-            // aperture-grille
-            PARAM_MASK_TYPE == 1 ? 0.0 :
-            // slot-mask
-            PARAM_MASK_TYPE == 2 ? 0.5 :
-            // shadow-mask
-            PARAM_MASK_TYPE == 3 ? 0.0 : 0.0;
+    // mask sub-pixel
+    float subpixel_offset =
+        // white, black
+        PARAM_MASK_SUBPIXEL == 1 ? mix(-1.2, -0.3, mask_blend) :
+        // green, magenta
+        PARAM_MASK_SUBPIXEL == 2 ? mix(-1.2, -0.3, mask_blend) :
+        // green, magenta, black
+        PARAM_MASK_SUBPIXEL == 3 ? 0.0 :
+        // red, green, blue
+        PARAM_MASK_SUBPIXEL == 4 ? 0.0 :
+        // red, green, blue, black
+        PARAM_MASK_SUBPIXEL == 5 ? mix(1.2, 0.3, mask_blend) : 0.0;
 
-        // mask size
-        float size_offset = 
-            // aperture-grille
-            PARAM_MASK_TYPE == 1 && mask_size > 1.0 ? 1.0 :
-            // slot-mask
-            PARAM_MASK_TYPE == 2 && mask_size > 1.0 ? 1.0 :
-            // shadow-mask
-            PARAM_MASK_TYPE == 3 && mask_size > 2.0 ? 1.0 :
-            // shadow-mask (smooting starts with size 3, instead of 2)
-            PARAM_MASK_TYPE == 3 && mask_size > 1.0 ? -0.5 : 0.0;
+    // mask type
+    float type_offset =
+        // aperture-grille
+        PARAM_MASK_TYPE == 1 ? 0.0 :
+        // slot-mask
+        PARAM_MASK_TYPE == 2 ? mix(1.0, 0.25, mask_blend) :
+        // shadow-mask
+        PARAM_MASK_TYPE == 3 ? 0.0 : 0.0;
 
-        float mask_intensity = normalized_sigmoid(PARAM_MASK_INTENSITY, 0.5);
+    // mask size
+    float size_offset = 
+        // aperture-grille for size > 2
+        PARAM_MASK_TYPE == 1 && mask_size > 2.0 ? mix(1.2, 0.3, mask_blend) :
+        // slot-mask for size > 2
+        PARAM_MASK_TYPE == 2 && mask_size > 2.0 ? mix(1.6, 0.4, mask_blend) :
+        // shadow-mask for size > 2
+        PARAM_MASK_TYPE == 3 && mask_size > 2.0 ? mix(2.0, 0.5, mask_blend) : 0.0;
 
-        // mask compensation
-        brightness_compensation +=
-           - 0.125 * mask_intensity
-           + 0.875 * (1.0 - PARAM_MASK_BLEND) * mask_intensity
-           + subpixel_offset * (1.0 - PARAM_MASK_BLEND * 0.5) * mask_intensity
-           + type_offset * (1.0 - PARAM_MASK_BLEND * 0.75) * mask_intensity
-           + size_offset * (1.0 - PARAM_MASK_BLEND) * mask_intensity;
-    }
+    // mask compensation
+    brightness_compensation -= 0.25 * mask_intensity;
+    brightness_compensation += 2.25 * (1.0 - mask_blend) * mask_intensity;
+    brightness_compensation += subpixel_offset * mask_intensity;
+    brightness_compensation += type_offset * mask_intensity;
+    brightness_compensation += size_offset * mask_intensity;
 
     return brightness_compensation;
 }

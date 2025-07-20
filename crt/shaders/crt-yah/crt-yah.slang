@@ -136,10 +136,9 @@ void main()
     color = apply_mask(color, color_luma, tex_coord);  // use un-curved coordinates to avoid Moire-artefacts
     color = apply_color_overflow(color);
     color = apply_halation(color, HalationSource, tex_coord_curved);
-    color = apply_brightness_compensation(color, color_luma);
 
     color *= get_vignette_factor(tex_coord_curved);
     color *= get_round_corner_factor(tex_coord_curved);
 
-    FragColor = vec4(OUTPUT(color), 1.0);
+    FragColor = vec4(OUTPUT(color, color_luma), 1.0);
 }
