@@ -253,22 +253,9 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         c3 = Black;
     }
 
-    const float o4 = 1.0 / 4.0;
-    const float o6 = 1.0 / 6.0;
-
     // Aperture-grille
     if (mask_type == 1)
     {
-        float shift =
-            // correct shape for size 2
-            size == 2 ? o4 :
-            // correct shape for size 3
-            size == 3 ? o6 :
-            // default
-            0.0;
-
-        pixCoord.x += shift;
-
         // white, black
         // magenta, green
         if (subpixel_type == 1 || subpixel_type == 2)
@@ -305,16 +292,6 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
             size == 2 ? 0.25 :
             // default
             0.125;
-
-        vec2 shift =
-            // correct shape for size 2
-            size == 2 ? vec2(o4, offset) :
-            // correct shape for size 3
-            size == 3 ? vec2(o6, offset) :
-            // default
-            vec2(0.0);
-
-        pixCoord += shift;
 
         // white, black
         // magenta, green
@@ -365,10 +342,8 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         else if (subpixel_type == 3 || subpixel_type == 4)
         {
             float shift =
-//              // correct shape for size 2
-//              size == 2 ? o4 :
                 // correct shape for size 3
-                size == 3 ? o6 :
+                size == 3 ? 1.0 / 6.0 :
                 // default
                 0.0;
 
