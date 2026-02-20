@@ -75,17 +75,17 @@ scale_type_y12 = absolute
 scale_x12 = 1.0
 scale_y12 = 684.0
 
-shader13 = ..\..\..\shaders\beam.slang
+shader13 = ..\..\..\shaders\phosphor-trichrome.slang
 filter_linear13 = false
-scale_type13 = viewport
+scale_type13 = source
 scale13 = 1.0
 
-shader14 = ..\..\..\shaders\mask.slang
+shader14 = ..\..\..\shaders\beam.slang
 filter_linear14 = false
-scale_type14 = source
+scale_type14 = viewport
 scale14 = 1.0
 
-shader15 = ..\..\..\shaders\phosphor-trichrome.slang
+shader15 = ..\..\..\shaders\mask.slang
 filter_linear15 = false
 scale_type15 = source
 scale15 = 1.0
@@ -104,6 +104,7 @@ shader18 = ..\..\..\shaders\bezel-sdr.slang
 filter_linear18 = true
 scale_type18 = viewport
 scale18 = 1.0
+mipmap_input18 = true
 
 textures = BORDER
 

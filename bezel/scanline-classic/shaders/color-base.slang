@@ -492,9 +492,10 @@ vec3 render_debug_card(vec2 uv, float safe_gain, float peak_gain, Colorimetry co
         }
         out_color = vec3(out_gray);
     } else if (row < 4.0) {
-        // 10-step HDR ramp, linear, 100 nits to 10000 nits (1 to 100)
+        // 10-step HDR ramp, logarithmic, 100 nits to 10000 nits (1 to 100)
         float step_index = floor(uv.x * 10.0);
-        out_gray = 1.0 + step_index * (99.0 / 9.0);
+        float t = clamp(step_index / 9.0, 0.0, 1.0);
+        out_gray = pow(100.0, t);
         out_color = vec3(out_gray);
     } else if (row < 5.0) {
         // SDR color bars at 0.75
@@ -623,16 +624,7 @@ void main()
 
     // Early exit for full bypass
     if (COLOR_CONVERSION_BYPASS > 0.5) {
-        // Inverse power law
-#ifdef HDR
-#ifdef SCRGB_OUTPUT
-    FragColor = vec4(toRGB * XYZ, 1.0);
-#else
-    FragColor = vec4(clamp(pq(toRGB * XYZ), 0.0, 1.0), 1.0);
-#endif
-#else
-    FragColor = vec4(crt_gamma(clamp(toRGB * XYZ, 0.0, 1.0)), 1.0);
-#endif
+        FragColor = vec4(toRGB * XYZ, 1.0);
         return;
     }
 
@@ -657,8 +649,7 @@ void main()
         vec3 RGB_baseline = toRGB * XYZ;
         vec3 delta = abs(RGB - RGB_baseline);
 
-        // Inverse power law
-        FragColor = vec4(crt_gamma(clamp(delta, 0.0, 1.0)), 1.0);
+        FragColor = vec4(max(delta, 0.0), 1.0);
         return;
     }
 
@@ -681,24 +672,9 @@ void main()
 
     vec3 color = RGB;
 
-#ifdef HDR
-#ifdef SCRGB_OUTPUT
-    // scRGB output: linear scene-referred values
-    // RetroArch HDR expects linear values with scRGB interpretation
-    // Our 1.0 = 100 nits reference
-    FragColor = vec4(color, 1.0);
-#else
-    // PQ output: SMPTE ST.2084 encoded values
-    // Note: There's a bug in PQ encoding causing squashed highlights
-    // Use SCRGB_OUTPUT define as workaround
-    FragColor = vec4(clamp(pq(color), 0.0, 1.0), 1.0);
-#endif
-}
-#else
     // Safety clamp
-    color = clamp(color, 0.0, 1.0);
-    
-    // Inverse power law
-    FragColor = vec4(crt_gamma(color), 1.0);
+    color = max(color, vec3(0.0));
+
+    // Output linear color; encoding happens in a later stage.
+    FragColor = vec4(color, 1.0);
 }
-#endif
