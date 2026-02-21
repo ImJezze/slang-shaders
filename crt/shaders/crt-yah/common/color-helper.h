@@ -1,6 +1,6 @@
-#ifndef COLOR_HELPER_DEFINDED
+#ifndef COLOR_HELPER_DEFINED
 
-#define COLOR_HELPER_DEFINDED
+#define COLOR_HELPER_DEFINED
 
 #include "constants.h"
 #include "colorspace-srgb.h"
@@ -92,4 +92,4 @@ vec3 apply_temperature(vec3 color, float white_point_relative)
         abs(white_point_relative));
 }
 
-#endif // COLOR_HELPER_DEFINDED
+#endif // COLOR_HELPER_DEFINED

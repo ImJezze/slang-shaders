@@ -1,6 +1,6 @@
-#ifndef SUBPIXEL_COLOR_DEFINDED
+#ifndef SUBPIXEL_COLOR_DEFINED
 
-#define SUBPIXEL_COLOR_DEFINDED
+#define SUBPIXEL_COLOR_DEFINED
 
 #include "constants.h"
 #include "geometry-helper.h"
@@ -440,4 +440,4 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
     return color;
 }
 
-#endif // SUBPIXEL_COLOR_DEFINDED
+#endif // SUBPIXEL_COLOR_DEFINED
