@@ -1,0 +1,8 @@
+#ifndef CONSTANTS_DEFINDED
+
+#define CONSTANTS_DEFINDED
+
+#define EPSILON 1e-5
+#define PI 3.1415926
+
+#endif // CONSTANTS_DEFINDED

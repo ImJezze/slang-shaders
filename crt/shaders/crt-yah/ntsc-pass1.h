@@ -4,9 +4,8 @@
     Modified by Jezze
 */
 
+#include "common/constants.h"
 #include "common/colorspace-yiq.h"
-
-#define PI 3.1415926
 
 vec3 pass1(vec3 yiq, vec2 pixCoord, int phase, float phase_shift, mat3 mix3x3, uint frameCount)
 {
@@ -65,7 +64,7 @@ vec3 pass1(sampler2D source, vec2 texCoord, vec2 pixCoord, int phase, float phas
 
     uint frame0 = 0; // static
     uint frame1 = jitter > 0.0
-        ? frameCount
+        ? frameCount // jitter
         : 1; // static
     vec3 yiq0 = pass1(yiq, pixCoord, phase, phaseShift, mix3x3, frame0);
     vec3 yiq1 = pass1(yiq, pixCoord, phase, phaseShift, mix3x3, frame1);

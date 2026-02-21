@@ -2,9 +2,8 @@
 
 #define SUBPIXEL_COLOR_DEFINDED
 
+#include "constants.h"
 #include "geometry-helper.h"
-
-#define EPSILON 1e-6
 
 const vec3 White = vec3(1.0, 1.0, 1.0);
 const vec3 Black = vec3(0.0, 0.0, 0.0);
