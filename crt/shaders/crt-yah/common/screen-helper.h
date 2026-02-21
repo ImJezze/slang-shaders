@@ -1,6 +1,6 @@
-#ifndef SCREEN_HELPER
+#ifndef SCREEN_HELPER_DEFINED
 
-#define SCREEN_HELPER
+#define SCREEN_HELPER_DEFINED
 
 #ifndef BASE_SIZE
     // The base size to compute the multiple from the source size.
@@ -254,4 +254,4 @@ float get_screen_multiple(vec2 source_size, float source_orientation, float mult
         : get_fixed_multiple(source_size, source_orientation, multiple_offset);
 }
 
-#endif // SCREEN_HELPER
+#endif // SCREEN_HELPER_DEFINED
