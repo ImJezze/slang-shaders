@@ -88,8 +88,14 @@ layout(set = 0, binding = 3) uniform sampler2D OriginalHistory1; // input frame 
 
 void main()
 {
-    if (DEBUG && TexCoord.x < 0.5
-        || PARAM_NTSC_PROFILE == 0.0)
+    if (DEBUG && TexCoord.x < 0.5)
+    {
+        FragColor = texture(Source, TexCoord);
+
+        return;
+    }
+
+    if (PARAM_NTSC_PROFILE == 0.0)
     {
         FragColor = texture(Source, TexCoord);
 

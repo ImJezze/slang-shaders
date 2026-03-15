@@ -107,8 +107,15 @@ layout(set = 0, binding = 2) uniform sampler2D Source;
 
 void main()
 {
-    if (DEBUG && TexCoord.x < 0.5
-        || PARAM_DECONVERGE_LINEAR == 0.0 && PARAM_DECONVERGE_RADIAL == 0.0)
+    if (DEBUG && TexCoord.x < 0.5)
+    {
+        FragColor = texture(Source, TexCoord);
+
+        return;
+    }
+
+    if (PARAM_DECONVERGE_LINEAR == 0.0
+        && PARAM_DECONVERGE_RADIAL == 0.0)
     {
         FragColor = texture(Source, TexCoord);
 

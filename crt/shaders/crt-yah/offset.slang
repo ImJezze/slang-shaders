@@ -149,6 +149,13 @@ float get_brightness_offset(vec3 color)
 
 void main()
 {
+    if (DEBUG && TexCoord.x < 0.5)
+    {
+        FragColor = texture(Source, TexCoord);
+
+        return;
+    }
+
     if (PARAM_COLOR_BRIGHTNESS_FLICKER == 0.0
         && PARAM_SCANLINES_OFFSET == 0.0)
     {
