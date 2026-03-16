@@ -133,13 +133,6 @@ void main()
     vec2 tex_coord_curved = apply_cubic_lens_distortion(tex_coord);
     vec2 tex_coord_curved_sharpened = apply_sharp_bilinear_filtering(tex_coord_curved);
 
-    if (DEBUG && TexCoord.x < 0.5)
-    {
-        FragColor = texture(TextureSource, tex_coord_curved_sharpened);
-
-        return;
-    }
-
     vec3 raw_color_sharpened = get_raw_color(TextureSource, tex_coord_curved_sharpened);
     vec3 scanlines_color = get_scanlines_color(TextureSource, tex_coord_curved);
 

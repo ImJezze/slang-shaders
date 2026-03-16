@@ -1,5 +1,3 @@
-#define DEBUG false
-
 // Global parameters
 #pragma parameter GLOBAL_MASTER "· ¹Global > Master  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.05
 

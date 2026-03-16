@@ -54,13 +54,7 @@ layout(set = 0, binding = 3) uniform sampler2D PhosphorPassFeedback;
 
 void main()
 {
-    if (DEBUG && TexCoord.x < 0.5)
-    {
-        FragColor = texture(Source, TexCoord);
-
-        return;
-    }
-
+    // return is effect is disabled
     if (PARAM_PHOSPHOR_AMOUNT == 0.0)
     {
         FragColor = texture(Source, TexCoord);
