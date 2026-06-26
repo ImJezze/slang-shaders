@@ -39,38 +39,41 @@ const vec3 C = Cyan;
 //     1: blue/green/red, magenta/green
 //     3: red/blue/Green, blue/yellow
 //     4: green/blue/red, yellow/blue
-const vec3 MaskColor1[20] = vec3[20](
-    W,   W,   W,   W,
-    G,   M,   B,   Y,
-    G,   M,   B,   Y,
-    R,   B,   R,   G,
-    R,   B,   R,   G
+//     5: blue/red/Green, cyan/red
+//     6: green/red/blue, red/cyan
+const vec3 MaskColor1[30] = vec3[30](
+    W,   W,   W,   W,   W,   W,
+    G,   M,   B,   Y,   C,   R,
+    G,   M,   B,   Y,   C,   R,
+    R,   B,   R,   G,   B,   G,
+    R,   B,   R,   G,   B,   G
 );
 
-const vec3 MaskColor2[20] = vec3[20](
-    X,   X,   X,   X,
-    M,   G,   Y,   B,
-    M,   G,   Y,   B,
-    G,   G,   B,   B,
-    G,   G,   B,   B
+const vec3 MaskColor2[30] = vec3[30](
+    X,   X,   X,   X,   X,   X,
+    M,   G,   Y,   B,   R,   C,
+    M,   G,   Y,   B,   R,   C,
+    G,   G,   B,   B,   R,   R,
+    G,   G,   B,   B,   R,   R
 );
 
-const vec3 MaskColor3[20] = vec3[20](
-    U,   U,   U,   U,   // unused
-    U,   U,   U,   U,   // unused
-    X,   X,   X,   X,
-    B,   R,   G,   R,
-    B,   R,   G,   R
+const vec3 MaskColor3[30] = vec3[30](
+    U,   U,   U,   U,   U,   U,   // unused
+    U,   U,   U,   U,   U,   U,   // unused
+    X,   X,   X,   X,   X,   X,
+    B,   R,   G,   R,   G,   B,
+    B,   R,   G,   R,   G,   B
 );
 
-const vec3 MaskColor4[20] = vec3[20](
-    U,   U,   U,   U,   // unused
-    U,   U,   U,   U,   // unused
-    U,   U,   U,   U,   // unused
-    U,   U,   U,   U,   // unused
-    X,   X,   X,   X
+const vec3 MaskColor4[30] = vec3[30](
+    U,   U,   U,   U,   U,   U,   // unused
+    U,   U,   U,   U,   U,   U,   // unused
+    U,   U,   U,   U,   U,   U,   // unused
+    U,   U,   U,   U,   U,   U,   // unused
+    X,   X,   X,   X,   X,   X
 );
 
+const int SubpixelTypes = 6;
 const int SubpixelCounts[5] = int[](2, 2, 3, 3, 4);
 
 // Returns an offset to shift the given pixel coordinate by x-amount for every second y-block.
@@ -139,6 +142,8 @@ vec3 get_subpixel_color(vec2 pixCoord, vec3 c1, vec3 c2, vec3 c3, vec3 c4, int c
 //   2: blue/green/red, magenta/green
 //   3: red/blue/Green, blue/yellow
 //   4: green/blue/red, yellow/blue
+//   5: blue/red/Green, cyan/red
+//   6: green/red/blue, red/cyan
 vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_type, int color_order)
 {
     if (mask_type == 0)
@@ -227,7 +232,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         }
     }
 
-    int lutIndex = (subpixel_type * 4) + color_order;
+    int lutIndex = (subpixel_type * SubpixelTypes) + color_order;
 
     vec3 color = get_subpixel_color(
         pixCoord,
@@ -261,6 +266,8 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
 //   2: blue/green/red, magenta/green
 //   3: red/blue/Green, blue/yellow
 //   4: green/blue/red, yellow/blue
+//   5: blue/red/Green, cyan/red
+//   6: green/red/blue, red/cyan
 // @radius - the corner radius of the sub-pixel
 // @smoothness - the smoothness of the sub-pixel
 vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_type, int color_order, float radius, float smoothness)
@@ -387,7 +394,7 @@ vec3 get_subpixel_color(vec2 pixCoord, int size, int mask_type, int subpixel_typ
         }
     }
 
-    int lutIndex = (subpixel_type * 4) + color_order;
+    int lutIndex = (subpixel_type * SubpixelTypes) + color_order;
 
     vec3 color = get_subpixel_color(
         pixCoord,
