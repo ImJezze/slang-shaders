@@ -7,34 +7,34 @@
 #pragma parameter SCREEN_FREQUENCY "  ⁴Screen > Frequency  (30Hz .. 60Hz)" 60.0 30.0 60.0 10.0
 #pragma parameter SCREEN_INTERLACED "   Screen > Interlaced²⁴  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 
-// Color parameters
-#pragma parameter COLOR_TEMPERATUE "·  Color > Temperature¹  (-Colder .. +Warmer)" 0.0 -1.0 1.0 0.1
+// Color/brightness parameters
+#pragma parameter COLOR_TEMPERATUE "   Color > Temperature¹  (-Colder .. +Warmer)" 0.0 -1.0 1.0 0.1
 #pragma parameter COLOR_SATURATION "   Color > Saturation¹  (0-Low .. 2-High)" 1.1 0.0 2.0 0.05
 #pragma parameter COLOR_CONTRAST "   Color > Contrast¹  (-Lower .. +Higher)" 0.1 -1.0 2.0 0.05
 #pragma parameter COLOR_BRIGHTNESS "   Color > Brightness¹  (-Darken .. +Lighten)" 0.15 -1.0 4.0 0.05
-#pragma parameter COLOR_OVERFLOW "   Color > Brightness Overflow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
-#pragma parameter COLOR_COMPENSATION "  ²Color > Brightness Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
-#pragma parameter COLOR_BLACK_LIGHT "  ³Color > Black Lightening (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
+#pragma parameter COLOR_OVERFLOW "   Brightness > Overflow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
+#pragma parameter COLOR_COMPENSATION "  ²Brightness > Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
+#pragma parameter COLOR_BLACK_LIGHT "  ³Brightness > Black Lighten  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
 
-// Scanline/beam parameters
+// Scanlines/beam parameters
 #pragma parameter SCANLINES_STRENGTH "·  Scanlines > Strength¹²³  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
-#pragma parameter BEAM_WIDTH_MIN "   Scanlines > Beam Min. Width  (less-Shrink .. 1-Full)" 0.25 -1.0 1.0 0.05
-#pragma parameter BEAM_WIDTH_MAX "   Scanlines > Beam Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
-#pragma parameter BEAM_SHAPE "   Scanlines > Beam Shape²  (0-Sharp .. 1-Smooth)" 0.75 0.0 1.0 0.25
-#pragma parameter BEAM_FILTER "   Scanlines > Beam Filter  (-Blocky .. +Blurry)" -0.25 -1.0 1.0 0.05
-#pragma parameter ANTI_RINGING "   Scanlines > Anti-Ringing  (0-None .. 1-Full)" 1.0 0.0 1.0 0.1
-#pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Color Burn¹  (0-None .. 1-Full)" 1.0 0.0 1.0 0.25
+#pragma parameter SCANLINES_COLOR_BURN "   Scanlines > Burn¹  (0-None .. 1-Full)" 1.0 0.0 1.0 0.25
 #pragma parameter SCREEN_SCALE "   Scanlines > Scale⁵  (-Down / 0-Auto / +Up)" 0.0 -4.0 2.0 0.05
+#pragma parameter BEAM_WIDTH_MIN "·  Beam > Min. Width  (less-Shrink .. 1-Full)" 0.25 -1.0 1.0 0.05
+#pragma parameter BEAM_WIDTH_MAX "   Beam > Max. Width  (1-Full .. more-Grow)" 1.25 1.0 2.0 0.05
+#pragma parameter BEAM_SHAPE "   Beam > Shape²  (0-Sharp .. 1-Smooth)" 0.75 0.0 1.0 0.25
+#pragma parameter BEAM_FILTER "   Beam > Filter  (-Blocky .. +Blurry)" -0.25 -1.0 1.0 0.05
+#pragma parameter ANTI_RINGING "   Beam > Anti-Ringing  (0-None .. 1-Full)" 1.0 0.0 1.0 0.1
 
-// Mask parameters
+// Mask/sub-pixel parameters
 #pragma parameter MASK_INTENSITY "·  Mask > Intensity¹²³  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
 #pragma parameter MASK_BLEND "   Mask > Blend²  (0-Multiplicative .. 1-Additive)" 0.25 0.0 1.0 0.05
 #pragma parameter MASK_TYPE "   Mask > Type²  (1-Aperture, 2-Slot, 3-Shadow)" 1.0 1.0 3.0 1.0
-#pragma parameter MASK_SUBPIXEL "   Mask > Sub-Pixel²  (1-Mono, 2-MG, 3-MGx, 4-RGB, 5-RGBx)" 4.0 1.0 5.0 1.0
-#pragma parameter MASK_SUBPIXEL_ORDER "   Mask > Sub-Pixel Order  (1-RGB, 2-BGR, 3-RBG, 4-GBR)" 1.0 1.0 4.0 1.0
-#pragma parameter MASK_SUBPIXEL_SHAPE "   Mask > Sub-Pixel Shape²  (0-Sharp .. 1-Smooth)  [4K]" 1.0 0.0 1.0 0.25
-#pragma parameter MASK_COLOR_BLEED "   Mask > Color Bleed¹²  (0-None .. 1-Full)" 0.25 0.0 1.0 0.25
 #pragma parameter MASK_SCALE "   Mask > Scale⁵  (-1 Down / 0-Auto / +½ Up)" 0.0 -2.0 4.0 0.5
+#pragma parameter MASK_SUBPIXEL "·  Sub-Pixel > Pattern²  (1-Mono, 2/3-MG/x, 4/5-RGB/x)" 4.0 1.0 5.0 1.0
+#pragma parameter MASK_SUBPIXEL_ORDER "   Sub-Pixel > Colors  (1/2-RGB/←, 3/4-RBG/←, 5/6-BRG/←)" 1.0 1.0 6.0 1.0
+#pragma parameter MASK_COLOR_BLEED "   Sub-Pixel > Bleed¹²  (0-None .. 1-Full)" 0.25 0.0 1.0 0.25
+#pragma parameter MASK_SUBPIXEL_SHAPE "   Sub-Pixel > Shape²  (0-Sharp .. 1-Smooth)  [4K]" 1.0 0.0 1.0 0.25
 
 // CRT parameters
 #pragma parameter CRT_CURVATURE_AMOUNT "·  CRT > Curvature¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
