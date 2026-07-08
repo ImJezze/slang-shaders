@@ -255,7 +255,8 @@ vec2 get_scanlines_texel_coordinate(vec2 pix_coord, vec2 tex_size)
     }
 
     // when automatic down-scaled
-    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0)
+    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0
+        || INPUT_SCREEN_MULTIPLE_NATIVE > 1.0)
     {
         // apply half texel x-offset (to sample between two pixel along scanlines)
         //   see vertex stage
@@ -359,7 +360,8 @@ vec3 apply_details(vec3 scanlines_color, sampler2D base_samler, vec2 base_coord,
     vec3 blur_color = texture(blur_sampler, blur_coord).rgb;
 
     // when automatic down-scaled
-    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0)
+    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0
+        || INPUT_SCREEN_MULTIPLE_NATIVE > 1.0)
     {
         // apply full texel x-offset (to sample a neighbor pixel)
         //   orientation-aware
