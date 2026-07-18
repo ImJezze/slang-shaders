@@ -30,14 +30,18 @@
 
 float get_brightness_compensation(float color_luma)
 {
-    float mask_blend = 1.0 - (1.0 - PARAM_MASK_BLEND) * (1.0 - PARAM_MASK_BLEND);
+    if (PARAM_COLOR_COMPENSATION == 0)
+    {
+        return 0.0;
+    }
 
-    return PARAM_COLOR_COMPENSATION > 0
-        ? mix(
-            INPUT_BRIGHTNESS_COMPENSATION,
-            INPUT_BRIGHTNESS_COMPENSATION * (1.0 - color_luma),
-            mask_blend)
-        : 0.0;
+    // consider color luminance for additive mask blend [1.0]
+    float mask_blend = 1.0 - ((1.0 - PARAM_MASK_BLEND) * (1.0 - PARAM_MASK_BLEND));
+
+    return mix(
+        INPUT_BRIGHTNESS_COMPENSATION,
+        INPUT_BRIGHTNESS_COMPENSATION * (1.0 - color_luma),
+        mask_blend);
 }
 
 vec3 RAWINPUT(vec3 color)
@@ -450,7 +454,7 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord, out vec3 mask_fact
     mask_add += PARAM_MASK_INTENSITY * 0.5;
 
     // blend multiplicative and additive mask
-    mask = mix(
+    mask_factor = mix(
         mask,
         mask_add,
         PARAM_MASK_BLEND);
@@ -458,10 +462,8 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord, out vec3 mask_fact
     // apply mask based on intensity
     color = mix(
         color,
-        color * mask,
+        color * mask_factor,
         PARAM_MASK_INTENSITY);
-
-    mask_factor = mask;
 
     return color;
 }
