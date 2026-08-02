@@ -63,4 +63,5 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 
 #define PARAM_HALATION_INTENSITY mix_master(global.HALATION_INTENSITY, 0.0, 0.0, 1.0)
 #define PARAM_HALATION_DIFFUSION global.HALATION_DIFFUSION
+#define PARAM_HALATION_WEIGHT global.HALATION_WEIGHT
 #define PARAM_HALATION_INFLUENCE global.HALATION_INFLUENCE

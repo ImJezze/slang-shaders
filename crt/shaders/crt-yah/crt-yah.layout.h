@@ -16,6 +16,7 @@ layout(std140, set = 0, binding = 0) uniform UBO
     float SHARP_AMOUNT;
     float HALATION_INTENSITY;
     float HALATION_DIFFUSION;
+    float HALATION_WEIGHT;
     float HALATION_INFLUENCE;
 } global;
 

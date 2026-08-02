@@ -483,11 +483,14 @@ vec3 apply_halation(vec3 color, sampler2D halation_source, vec2 tex_coord, vec3 
     // use raw input without applying back lighting
     vec3 halation = RAWINPUT(texture(halation_source, tex_coord).rgb);
 
-    // weight halation by its luminance based on diffusion amount
+    float halation_luma = get_luminance(halation);
+    float halation_weight = normalized_sigmoid(halation_luma, -0.75);
+
+    // weight halation by its luminance
     halation *= mix(
         1.0,
-        get_luminance(halation),
-        PARAM_HALATION_DIFFUSION * 0.75);
+        halation_weight,
+        PARAM_HALATION_WEIGHT);
 
     // halation "between" scanlines
     vec3 scanlines_halation = halation - color;
