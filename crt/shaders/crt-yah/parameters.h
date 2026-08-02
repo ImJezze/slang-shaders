@@ -55,6 +55,7 @@
 
 // Halation parameters
 #pragma parameter HALATION_INTENSITY "·  Halation > Intensity¹  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
+#pragma parameter HALATION_WEIGHT "   Halation > Weight  (0-also Dark .. 1-only Bright)" 0.75 0.0 1.0 0.05
 #pragma parameter HALATION_DIFFUSION "   Halation > Diffusion  (0-Low .. 1-High)" 0.5 0.0 1.0 0.05
 #pragma parameter HALATION_INFLUENCE "   Halation > Influence  (-Mask / 0-Both / +Scanlines)" 0.5 -1.0 1.0 0.05
 
