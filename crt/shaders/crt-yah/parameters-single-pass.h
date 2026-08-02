@@ -39,7 +39,7 @@
 // Sub-pixel parameters
 #pragma parameter MASK_SUBPIXEL "·  Sub-Pixel > Pattern²  (1-Mono, 2/3-MG/x, 4/5-RGB/x)" 4.0 1.0 5.0 1.0
 #pragma parameter MASK_SUBPIXEL_ORDER "   Sub-Pixel > Colors  (1/2-RGB/←, 3/4-RBG/←, 5/6-BRG/←)" 1.0 1.0 6.0 1.0
-#pragma parameter MASK_COLOR_BLEED "   Sub-Pixel > Bleed¹²  (0-None .. 1-Full)" 0.25 0.0 1.0 0.25
+#pragma parameter MASK_COLOR_BLEED "   Sub-Pixel > Bleed¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
 #pragma parameter MASK_SUBPIXEL_SHAPE "   Sub-Pixel > Shape²  (0-Sharp .. 1-Smooth)  [4K]" 1.0 0.0 1.0 0.25
 
 // CRT parameters
