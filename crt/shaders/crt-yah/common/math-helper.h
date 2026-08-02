@@ -23,7 +23,10 @@ float random(vec2 seed)
 // See: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/
 float normalized_sigmoid(float value, float slope)
 {
-    return (value - value * slope) / (slope - abs(value) * 2.0 * slope + 1.0);
+    float numerator = (1.0f - slope) * value;
+    float denominator = (1.0f + slope) - (abs(value) * slope * 2.0f);
+
+    return numerator / denominator;
 }
 
 #endif // MATH_HELPER_DEFINED
