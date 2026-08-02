@@ -439,7 +439,9 @@ vec3 apply_mask(vec3 color, float color_luma, vec2 tex_coord, out vec3 mask_fact
     float mask_luma = get_luminance(mask);
 
     // apply color bleed to neighbor sub-pixel
-    mask += mask_luma * PARAM_MASK_COLOR_BLEED;
+    mask += max(
+        vec3(0.0),
+        vec3(mask_luma) - mask) * PARAM_MASK_COLOR_BLEED * PARAM_MASK_COLOR_BLEED;
 
     // apply half color luma for additive mask
     mask = mix(
