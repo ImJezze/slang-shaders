@@ -475,6 +475,32 @@ vec3 apply_color_overflow(vec3 color)
     return apply_color_overflow(color, PARAM_COLOR_OVERFLOW);
 }
 
+vec3 adjust_halation(vec3 color, vec3 halation, vec3 scanlines_factor, vec3 mask_factor)
+{
+    // halation "between" scanlines
+    vec3 scanlines_halation = halation - color;
+
+    // halation "above" mask
+    vec3 mask_halation = halation
+        * scanlines_factor
+        * mask_factor
+        * PARAM_MASK_INTENSITY;
+
+    scanlines_halation = max(vec3(0.0), scanlines_halation);
+    mask_halation = max(vec3(0.0), mask_halation);
+
+    vec3 affective_halation = PARAM_HALATION_INFLUENCE < 0.0
+        ? mask_halation * 4.0
+        : scanlines_halation;
+
+    return mix(
+        // both scanlines and mask
+        scanlines_halation + mask_halation,
+        // either scanlines or mask
+        affective_halation,
+        abs(PARAM_HALATION_INFLUENCE));
+}
+
 vec3 apply_halation(vec3 color, sampler2D halation_source, vec2 tex_coord, vec3 scanlines_factor, vec3 mask_factor)
 {
     if (PARAM_HALATION_INTENSITY == 0.0)
@@ -488,31 +514,13 @@ vec3 apply_halation(vec3 color, sampler2D halation_source, vec2 tex_coord, vec3 
     float halation_luma = get_luminance(halation);
     float halation_weight = normalized_sigmoid(halation_luma, -0.75);
 
-    // weight halation by its luminance
-    halation *= mix(
-        1.0,
-        halation_weight,
-        PARAM_HALATION_WEIGHT);
+    halation = adjust_halation(color, halation, scanlines_factor, mask_factor);
 
-    // halation "between" scanlines
-    vec3 scanlines_halation = halation - color;
-
-    // halation "above" mask
-    vec3 mask_halation = halation * scanlines_factor * mask_factor
-        * PARAM_MASK_INTENSITY;
-
-    vec3 affective_halation = PARAM_HALATION_INFLUENCE < 0.0
-        ? mask_halation * 4.0
-        : scanlines_halation;
-
-    halation = mix(
-        // both scanlines and mask
-        scanlines_halation + mask_halation,
-        // either scanlines or mask
-        affective_halation,
-        abs(PARAM_HALATION_INFLUENCE));
-
-    return color + halation * (PARAM_HALATION_INTENSITY * 0.25);
+    return color
+        // ambience with configurable weight
+        + halation * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, -0.5) * mix(1.0, halation_luma, PARAM_HALATION_WEIGHT) * 0.125
+        // essence
+        + halation * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, 0.5) * halation_luma * 0.5;
 }
 
 vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
