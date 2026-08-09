@@ -148,18 +148,19 @@ float get_vignette_factor(vec2 tex_coord)
         return 1.0;
     }
 
-    float amount = PARAM_CRT_VIGNETTE_AMOUNT;
+    float amount = normalized_sigmoid(PARAM_CRT_VIGNETTE_AMOUNT, -0.5);
 
     // center coordinates
     tex_coord -= 0.5;
 
-    // compute vignetting
-    float vignette_radius = 1.0 - (amount * 0.25);
-    float vignette_length = length(tex_coord);
-    float vignette_blur = (amount * 0.125) + 0.375;
-    float vignette = smoothstep(vignette_radius, vignette_radius - vignette_blur, vignette_length);
+    float radius = 1.0 - (amount * 0.25);
+    float softness = (amount * 0.125) + 0.375;
+    float distance = length(tex_coord);
 
-    return clamp(vignette, 0.0, 1.0);
+    return smoothstep(
+        radius,
+        radius - softness,
+        distance);
 }
 
 float get_round_corner_factor(vec2 tex_coord)
