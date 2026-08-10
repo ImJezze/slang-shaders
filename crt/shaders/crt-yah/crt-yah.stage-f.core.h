@@ -513,15 +513,24 @@ vec3 apply_halation(vec3 color, sampler2D halation_source, vec2 tex_coord, vec3 
     vec3 halation = RAWINPUT(texture(halation_source, tex_coord).rgb);
 
     float halation_luma = get_luminance(halation);
-    float halation_weight = normalized_sigmoid(halation_luma, -0.75);
 
+    // adjust based on scanlines and mask
     halation = adjust_halation(color, halation, scanlines_factor, mask_factor);
 
+    vec3 halation_ambience = halation
+        // increased intensity at start of range
+        * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, -0.5)
+        // weighted from none to luma
+        * mix(1.0, halation_luma, PARAM_HALATION_WEIGHT);
+    vec3 halation_essence = halation
+        // increased intensity at end of range
+        * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, 0.5)
+        // weighted from luma to luma squared
+        * mix(halation_luma, halation_luma * halation_luma, PARAM_HALATION_WEIGHT);
+
     return color
-        // ambience with configurable weight
-        + halation * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, -0.5) * mix(1.0, halation_luma, PARAM_HALATION_WEIGHT) * 0.125
-        // essence
-        + halation * normalized_sigmoid(PARAM_HALATION_INTENSITY, 2.0, 0.5) * halation_luma * 0.5;
+        + halation_ambience * 0.125
+        + halation_essence * 0.375;
 }
 
 vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
