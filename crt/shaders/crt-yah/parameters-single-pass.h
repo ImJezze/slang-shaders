@@ -15,6 +15,7 @@
 
 // Brightness parameters
 #pragma parameter COLOR_OVERFLOW "·  Brightness > Glow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
+#pragma parameter CRT_NOISE_AMOUNT "   Brightness > Noise¹³  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
 #pragma parameter COLOR_BLACK_LIGHT "  ³Brightness > Black Lighten  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
 #pragma parameter COLOR_COMPENSATION "  ²Brightness > Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
@@ -45,9 +46,8 @@
 // CRT parameters
 #pragma parameter CRT_CURVATURE_AMOUNT "·  CRT > Curvature¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 #pragma parameter CRT_VIGNETTE_AMOUNT "   CRT > Vignette¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
-#pragma parameter CRT_NOISE_AMOUNT "   CRT > Noise¹³  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
-#pragma parameter CRT_CORNER_RAIDUS "   CRT > Corner Radius¹  (0-None .. 25%)" 0.0 0.0 0.25 0.01
-#pragma parameter CRT_CORNER_SMOOTHNESS "   CRT > Corner Smoothness  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
+#pragma parameter CRT_CORNER_RAIDUS "   CRT > Corner Roundness  (0-None .. 25%)" 0.0 0.0 0.25 0.01
+#pragma parameter CRT_CORNER_SMOOTHNESS "   CRT > Edge Smoothness  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 
 #pragma parameter INFO1 " ¹ Reduces marked effects" 0.0 0.0 0.0 0.0
 #pragma parameter INFO2 " ² Compensates brightness changes of marked effects" 0.0 0.0 0.0 0.0
