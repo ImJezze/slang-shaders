@@ -3,8 +3,8 @@
 
 // Screen parameters
 #pragma parameter SCREEN_ORIENTATION "·  Screen > Orientation  (0-Auto, 1-Horizontal, 2-Vertical)" 0.0 0.0 2.0 1.0
-#pragma parameter SCREEN_RESOLUTION_SCALE "  ⁵Screen > Resolution  (1-Native, 2/3-Low/+, 4/5-High/+)" 2.0 1.0 5.0 1.0
-#pragma parameter SCREEN_FREQUENCY "  ⁴Screen > Frequency  (30Hz .. 60Hz)" 60.0 30.0 60.0 10.0
+#pragma parameter SCREEN_RESOLUTION_SCALE "  ⁵Screen > Resolution  (1-Native, 2~240p/↑, 4~480p/↑)" 2.0 1.0 5.0 1.0
+#pragma parameter SCREEN_FREQUENCY "  ⁴Screen > Frequency  (30Hz .. 60Hz)" 60.0 30.0 60.0 10.0
 #pragma parameter SCREEN_INTERLACED "   Screen > Interlaced²⁴  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 
 // Color parameters
@@ -16,8 +16,8 @@
 // Brightness parameters
 #pragma parameter COLOR_OVERFLOW "·  Brightness > Glow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
 #pragma parameter CRT_NOISE_AMOUNT "   Brightness > Noise¹³  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
-#pragma parameter COLOR_BLACK_LIGHT "  ³Brightness > Black Lighten  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
-#pragma parameter COLOR_COMPENSATION "  ²Brightness > Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
+#pragma parameter COLOR_BLACK_LIGHT "  ³Brightness > Black Lighten  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
+#pragma parameter COLOR_COMPENSATION "  ²Brightness > Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
 
 // Scanlines parameters
 #pragma parameter SCANLINES_STRENGTH "·  Scanlines > Strength¹²³  (0-None .. 1-Full)" 0.5 0.0 1.0 0.05
@@ -38,8 +38,8 @@
 #pragma parameter MASK_SCALE "   Mask > Scale⁵  (-1 Down / 0-Auto / +½ Up)" 0.0 -2.0 4.0 0.5
 
 // Sub-pixel parameters
-#pragma parameter MASK_SUBPIXEL "·  Sub-Pixel > Pattern²  (1-Mono, 2/3-MG/x, 4/5-RGB/x)" 4.0 1.0 5.0 1.0
-#pragma parameter MASK_SUBPIXEL_ORDER "   Sub-Pixel > Colors  (1/2-RGB/←, 3/4-RBG/←, 5/6-BRG/←)" 1.0 1.0 6.0 1.0
+#pragma parameter MASK_SUBPIXEL "·  Sub-Pixel > Pattern²  (1-Mono, 2-MG/x, 4-RGB/x)" 4.0 1.0 5.0 1.0
+#pragma parameter MASK_SUBPIXEL_ORDER "   Sub-Pixel > Colors  (1-RGB/←, 3-RBG/←, 5-BRG/←)" 1.0 1.0 6.0 1.0
 #pragma parameter MASK_COLOR_BLEED "   Sub-Pixel > Bleed¹²  (0-None .. 1-Full)" 0.5 0.0 1.0 0.25
 #pragma parameter MASK_SUBPIXEL_SHAPE "   Sub-Pixel > Shape²  (0-Sharp .. 1-Smooth)  [4K]" 1.0 0.0 1.0 0.25
 
