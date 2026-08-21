@@ -46,7 +46,7 @@
 // CRT parameters
 #pragma parameter CRT_CURVATURE_AMOUNT "·  CRT > Curvature¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 #pragma parameter CRT_VIGNETTE_AMOUNT "   CRT > Vignette¹  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
-#pragma parameter CRT_CORNER_RAIDUS "   CRT > Corner Roundness  (0-None .. 25%)" 0.0 0.0 0.25 0.01
+#pragma parameter CRT_CORNER_RAIDUS "   CRT > Corner Roundness¹  (0-None .. 25%)" 0.0 0.0 0.25 0.01
 #pragma parameter CRT_CORNER_SMOOTHNESS "   CRT > Edge Smoothness  (0-None .. 1-Full)" 0.0 0.0 1.0 0.05
 
 #pragma parameter INFO1 " ¹ Reduces marked effects" 0.0 0.0 0.0 0.0

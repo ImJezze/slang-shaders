@@ -16,7 +16,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 
 #define PARAM_COLOR_COMPENSATION int(param.COLOR_COMPENSATION)
 #define PARAM_COLOR_BRIGHTNESS mix_master(param.COLOR_BRIGHTNESS, 0.0, -1.0, 4.0)
-#define PARAM_COLOR_BRIGHTNESS_FLICKER param.COLOR_BRIGHTNESS_FLICKER
+#define PARAM_COLOR_BRIGHTNESS_FLICKER mix_master(param.COLOR_BRIGHTNESS_FLICKER, 0.0, 0.0, 1.0)
 #define PARAM_COLOR_OVERFLOW mix_master(param.COLOR_OVERFLOW, 0.0, 0.0, 2.0)
 #define PARAM_COLOR_CONTRAST mix_master(param.COLOR_CONTRAST, 0.0, -1.0, 2.0)
 #define PARAM_COLOR_SATURATION mix_master(param.COLOR_SATURATION, 1.0, 0.0, 2.0)
