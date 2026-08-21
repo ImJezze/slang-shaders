@@ -328,8 +328,8 @@ uvec2 get_frame_counts()
     // interlace scanlines every 2rd frame by frequency (30/60Hz)
     float interlace_frame = mod(GetUniformFrameCount(PARAM_SCREEN_FREQUENCY), 2.0);
 
-    // repeat noise every 20 frames with 12Hz
-    float noise_frame = mod(GetUniformFrameCount(12), 20);
+    // repeat noise every 6 frames with 12Hz
+    float noise_frame = mod(GetUniformFrameCount(12), 6);
 
     return uvec2(
         uint(interlace_frame),
