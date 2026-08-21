@@ -154,7 +154,7 @@ float get_brightness_compensation()
         // slot-mask
         PARAM_MASK_TYPE == 2 ? mix(1.6, 0.4, mask_blend) :
         // shadow-mask
-        PARAM_MASK_TYPE == 3 ? mix(2.4, 0.6, mask_blend) : 1.0;
+        PARAM_MASK_TYPE == 3 ? mix(2.8, 0.7, mask_blend) : 1.0;
 
     // mask bleed
     float bleed_offset = PARAM_MASK_COLOR_BLEED * mix(-0.5, -0.25, mask_blend);
