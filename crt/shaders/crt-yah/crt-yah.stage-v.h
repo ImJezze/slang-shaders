@@ -5,7 +5,7 @@ layout(location = 0) out vec2 TexCoord;
 layout(location = 1) out vec2 ScanTexCoord;
 layout(location = 2) out vec2 TexSize;
 layout(location = 3) flat out int ScreenOrientation;
-layout(location = 4) out vec3 ScreenMultipleProfile;
+layout(location = 4) out vec2 ScreenMultipleProfile;
 layout(location = 5) out float BrightnessCompensation;
 layout(location = 6) out vec4 MaskProfile;
 layout(location = 7) out vec4 BeamProfile;
@@ -18,7 +18,6 @@ layout(location = 11) out mat4x4 BeamFilter;
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
 #define INPUT_SCREEN_MULTIPLE (ScreenMultipleProfile.x)
 #define INPUT_SCREEN_MULTIPLE_AUTO (ScreenMultipleProfile.y)
-#define INPUT_SCREEN_MULTIPLE_NATIVE (ScreenMultipleProfile.z)
 #define INPUT_MASK_PROFILE MaskProfile
 
 #include "crt-yah.stage-v.core.h"
@@ -32,8 +31,7 @@ void main()
 
     ScreenOrientation = get_orientation(global.OutputSize.xy, PARAM_SCREEN_ORIENTATION);
     ScreenMultipleProfile.x = get_screen_multiple(global.OriginalSize.xy, ScreenOrientation, -PARAM_SCREEN_SCALE);
-    ScreenMultipleProfile.y = get_screen_multiple(global.OriginalSize.xy, ScreenOrientation, 0.0);
-    ScreenMultipleProfile.z = get_auto_multiple(global.OriginalSize.xy, ScreenOrientation, 0.0);
+    ScreenMultipleProfile.y = get_auto_multiple(global.OriginalSize.xy, ScreenOrientation, 0.0);
     MaskProfile = get_mask_profile();
     BeamProfile = get_beam_profile();
     BeamFilter = get_beam_filter();
@@ -44,8 +42,7 @@ void main()
     TexSize = get_tex_size();
 
     // when automatic down-scaled
-    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0
-        || INPUT_SCREEN_MULTIPLE_NATIVE > 1.0)
+    if (INPUT_SCREEN_MULTIPLE_AUTO > 1.0)
     {
         // compensate half texel x-offset (to sample between two pixel along scanlines)
         //   see fragment stage

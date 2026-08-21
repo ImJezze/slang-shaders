@@ -3,7 +3,7 @@ layout(location = 0) in vec2 TexCoord;
 layout(location = 1) in vec2 ScanTexCoord;
 layout(location = 2) in vec2 TexSize;
 layout(location = 3) flat in int ScreenOrientation;
-layout(location = 4) in vec3 ScreenMultipleProfile;
+layout(location = 4) in vec2 ScreenMultipleProfile;
 layout(location = 5) in float BrightnessCompensation;
 layout(location = 6) in vec4 MaskProfile;
 layout(location = 7) in vec4 BeamProfile;
@@ -35,7 +35,6 @@ layout(location = 0) out vec4 FragColor;
 #define INPUT_SCREEN_ORIENTATION ScreenOrientation
 #define INPUT_SCREEN_MULTIPLE (ScreenMultipleProfile.x)
 #define INPUT_SCREEN_MULTIPLE_AUTO (ScreenMultipleProfile.y)
-#define INPUT_SCREEN_MULTIPLE_NATIVE (ScreenMultipleProfile.z)
 #define INPUT_BRIGHTNESS_COMPENSATION BrightnessCompensation
 #define INPUT_MASK_PROFILE MaskProfile
 #define INPUT_BEAM_PROFILE BeamProfile

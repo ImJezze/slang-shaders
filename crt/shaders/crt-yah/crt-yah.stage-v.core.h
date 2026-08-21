@@ -57,8 +57,8 @@ vec4 get_mask_profile()
     // up-scale with factional increments
     float subpixel_upscale = PARAM_MASK_SCALE + 1.0;
 
-    // auto scale by native multiple
-    subpixel_size = floor(subpixel_size * INPUT_SCREEN_MULTIPLE_NATIVE);
+    // auto scale by multiple
+    subpixel_size = floor(subpixel_size * INPUT_SCREEN_MULTIPLE_AUTO);
     // limit after auto scale
     subpixel_size = max(1.0, subpixel_size);
 
