@@ -50,12 +50,12 @@ vec4 get_mask_profile()
         ? 3.0
         : 4.0;
 
+    float subpixel_size = pixel_size / subpixel_count;
+
     // down-scale with integer increments
     float subpixel_downscale = floor(abs(PARAM_MASK_SCALE)) + 1.0;
     // up-scale with factional increments
     float subpixel_upscale = PARAM_MASK_SCALE + 1.0;
-
-    float subpixel_size = pixel_size / subpixel_count;
 
     // auto scale by native multiple
     subpixel_size = floor(subpixel_size * INPUT_SCREEN_MULTIPLE_NATIVE);
@@ -64,8 +64,8 @@ vec4 get_mask_profile()
 
     // manual scale
     subpixel_size = PARAM_MASK_SCALE < 0.0
-        ? ceil(subpixel_size / subpixel_downscale)
-        : floor(subpixel_size * subpixel_upscale);
+        ? floor(subpixel_size / subpixel_downscale)
+        : ceil(subpixel_size * subpixel_upscale);
     // limit after manual scale
     subpixel_size = max(1.0, subpixel_size);
 
