@@ -548,7 +548,7 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
     // scale noise based on mask's sub-pixel size
     screen_coord = floor(screen_coord / subpixel_size) * subpixel_size;
 
-    float noise = random(screen_coord * (noise_frame + 1.0));
+    float noise = random(screen_coord * (noise_frame + 1.0) * color_luma);
     float mul_noise = noise * 2.0;
     float add_noise = noise * (1.0 - color_luma) * noise_floor;
 
