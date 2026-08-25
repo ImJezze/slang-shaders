@@ -540,7 +540,9 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
 
     int subpixel_size = int(INPUT_MASK_PROFILE.y);
     float noise_floor = INPUT_FLOOR_PROFILE.y;
-    float noise_frame = INPUT_FRAME_COUNTS.y;
+    float noise_frame = PARAM_CRT_NOISE_AMOUNT > 0
+        ? INPUT_FRAME_COUNTS.y
+        : 0.0;
 
     // texture to screen coordinates, orientation-aware
     vec2 screen_coord = vec2o(tex_coord.xy * global.OutputSize.xy);
@@ -555,5 +557,5 @@ vec3 apply_noise(vec3 color, float color_luma, vec2 tex_coord)
     return mix(
         color,
         color * mul_noise + add_noise,
-        (1.0 - color_luma) * PARAM_CRT_NOISE_AMOUNT * 0.25);
+        (1.0 - color_luma) * abs(PARAM_CRT_NOISE_AMOUNT) * 0.25);
 }

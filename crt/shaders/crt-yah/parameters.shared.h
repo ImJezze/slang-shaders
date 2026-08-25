@@ -44,7 +44,7 @@ float mix_master(float value, float off_value, float min_value, float max_value)
 
 #define PARAM_CRT_CURVATURE_AMOUNT mix_master(param.CRT_CURVATURE_AMOUNT, 0.0, 0.0, 1.0)
 #define PARAM_CRT_VIGNETTE_AMOUNT mix_master(param.CRT_VIGNETTE_AMOUNT, 0.0, 0.0, 1.0)
-#define PARAM_CRT_NOISE_AMOUNT mix_master(param.CRT_NOISE_AMOUNT, 0.0, 0.0, 1.0)
+#define PARAM_CRT_NOISE_AMOUNT mix_master(param.CRT_NOISE_AMOUNT, 0.0, -1.0, 1.0)
 #define PARAM_CRT_CORNER_RAIDUS mix_master(param.CRT_CORNER_RAIDUS, 0.0, 0.0, 0.25)
 #define PARAM_CRT_CORNER_SMOOTHNESS param.CRT_CORNER_SMOOTHNESS
 

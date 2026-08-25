@@ -16,7 +16,7 @@
 
 // Brightness parameters
 #pragma parameter COLOR_OVERFLOW "·  Brightness > Glow¹  (0-None .. 1-Full / 2-More)" 1.0 0.0 2.0 0.25
-#pragma parameter CRT_NOISE_AMOUNT "   Brightness > Noise¹³  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
+#pragma parameter CRT_NOISE_AMOUNT "   Brightness > Noise¹³  (-Static .. +Dynamic)" 0.25 -1.0 1.0 0.05
 #pragma parameter COLOR_BRIGHTNESS_FLICKER "   Brightness > Flicker¹⁴  (0-None .. 1-Full)" 0.25 0.0 1.0 0.05
 #pragma parameter COLOR_BLACK_LIGHT "  ³Brightness > Black Lighten  (0-None .. 1-Full / 2-More)" 0.5 0.0 2.0 0.1
 #pragma parameter COLOR_COMPENSATION "  ²Brightness > Compensation  (0-Off, 1-On)" 1.0 0.0 1.0 1.0
