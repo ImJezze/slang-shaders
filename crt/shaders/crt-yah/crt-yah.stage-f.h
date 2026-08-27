@@ -67,8 +67,8 @@ void main()
     float color_luma = get_luminance(color);
 
     vec3 mask_factor = vec3(0.0);
-    color = apply_mask(color, color_luma, tex_coord, mask_factor);  // use un-curved coordinates to avoid Moire-artifacts
     color = apply_noise(color, color_luma, tex_coord); // use un-curved coordinates to avoid Moire-artifacts
+    color = apply_mask(color, color_luma, tex_coord, mask_factor);  // use un-curved coordinates to avoid Moire-artifacts
 
 #ifndef IS_SINGLE_PASS
     color = apply_halation(color, HalationSource, tex_coord_curved, scanlines_factor, mask_factor);
