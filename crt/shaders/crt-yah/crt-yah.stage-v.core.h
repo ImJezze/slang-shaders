@@ -41,33 +41,47 @@ vec2 vec2o(float x, float y)
 
 vec4 get_mask_profile()
 {
-    float pixel_size = global.OriginalSize.x < global.OriginalSize.y
-        ? global.FinalViewportSize.x / global.OriginalSize.x
-        : global.FinalViewportSize.y / global.OriginalSize.y;
+    float subpixel_count = 4.0;
+    float subpixel_scale = PARAM_MASK_SCALE;
 
-    // smaller sub-pixel count for low resolution
-    float subpixel_count = min(global.OriginalSize.x, global.OriginalSize.y) < 180.0
-        ? 3.0
-        : 4.0;
+    float screen_multiple = PARAM_SCREEN_RESOLUTION_SCALE > 1
+        ? INPUT_SCREEN_MULTIPLE
+        : INPUT_SCREEN_MULTIPLE_AUTO; // disable mask scale for native resolution profile
+    float screen_size = min(global.OriginalSize.x, global.OriginalSize.y) * screen_multiple;
+
+    // adjust sub-pixel for small resolutions
+    if (screen_size < 180.0)
+    {
+        // adjust sub-pixel for shadow mask
+        subpixel_count *= PARAM_MASK_TYPE == 3
+            ? 1.5
+            : 0.75;
+        subpixel_scale += PARAM_MASK_TYPE == 3
+            ? screen_size < 160.0 ? 0.5 : 1.0 // for even lower resoluation
+            : 0.0;
+    }
+
+    float pixel_size = min(
+        global.FinalViewportSize.x / global.OriginalSize.x,
+        global.FinalViewportSize.y / global.OriginalSize.y);
 
     float subpixel_size = pixel_size / subpixel_count;
 
     // down-scale with integer increments
-    float subpixel_downscale = floor(abs(PARAM_MASK_SCALE)) + 1.0;
+    float subpixel_downscale = floor(abs(subpixel_scale)) + 1.0;
     // up-scale with factional increments
-    float subpixel_upscale = PARAM_MASK_SCALE + 1.0;
+    float subpixel_upscale = subpixel_scale + 1.0;
 
-    // auto scale by multiple
-    subpixel_size = floor(subpixel_size * INPUT_SCREEN_MULTIPLE_AUTO);
-    // limit after auto scale
-    subpixel_size = max(1.0, subpixel_size);
+    // auto scale by screen multiple
+    subpixel_size = subpixel_size * screen_multiple;
 
     // manual scale
     subpixel_size = PARAM_MASK_SCALE < 0.0
-        ? floor(subpixel_size / subpixel_downscale)
-        : ceil(subpixel_size * subpixel_upscale);
-    // limit after manual scale
-    subpixel_size = max(1.0, subpixel_size);
+        ? subpixel_size / subpixel_downscale
+        : subpixel_size * subpixel_upscale;
+
+    // limit size
+    subpixel_size = max(1.0, floor(subpixel_size));
 
     // for sub-pixel size > 2
     float subpixel_smoothness =
